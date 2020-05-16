@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create user</title>
+
+    <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="../views/header/header :: header" ></div>
+
+<div class="container">
+    <h2 class="text-danger">Add new user:</h2>
+    <form th:action="@{/users/}" method="post" th:object="${user}">
+        <div class = "form-group">
+            <label for = "login">Login</label>
+            <input id = "login" class = "form-control" th:field="*{login}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'login' )}"
+                    th:errors = "${user.login}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "password">Password</label>
+            <input id = "password" class = "form-control" th:field="*{password}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'password' )}"
+                    th:errors = "${user.password}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "firstName">First name</label>
+            <input id = "firstName" class = "form-control" th:field="*{firstName}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'firstName' )}"
+                    th:errors = "${user.firstName}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "secondName">Second name</label>
+            <input id = "secondName" class = "form-control" th:field="*{secondName}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'secondName' )}"
+                    th:errors = "${user.secondName}"
+                    class = "text-danger"></span>
+        </div>
+        <button class="button" type = "submit">Submit</button>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="../views/header/header :: header" ></div>
+
+<div class="container">
+    <h2 class="text-danger">All users:</h2>
+    <table class="table">
+        <thead>
+        <th>Id</th>
+        <th>Login</th>
+        <th>First name</th>
+        <th>Second name</th>
+        </thead>
+        <tbody>
+        <tr th:each="user:${users}">
+            <td>
+                <a th:href="@{/users/getById( id = ${user.getId()} )}" th:text="${user.getId()}" ></a>
+            </td>
+            <td th:text="${user.getLogin()}" />
+            <td th:text="${user.getFirstName()}" />
+            <td th:text="${user.getSecondName()}" />
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+
+    <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="../views/header/header :: header" ></div>
+
+<div class = "container">
+    <h2 class = "text-danger">User:</h2>
+    <div>
+        <label for = "id">Id: </label>
+        <p id = "id" th:text = "${user.getId()}" />
+    </div>
+    <div>
+        <label for = "login">Login: </label>
+        <p id = "login" th:text = "${user.getLogin()}" />
+    </div>
+    <div>
+        <label for = "firstName">First name: </label>
+        <p id = "firstName" th:text = "${user.getFirstName()}" />
+    </div>
+    <div>
+        <label for = "secondName">Second name: </label>
+        <p id = "secondName" th:text = "${user.getSecondName()}" />
+    </div>
+    <div>
+        <label for = "pass">Password: </label>
+        <p id = "pass" th:text = "${user.getPassword()}" />
+    </div>
+</div>
+</body>
+</html>
