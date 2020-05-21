@@ -20,10 +20,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query( "from User" )
     List<User> getAll();
 
-    @Modifying
-    @Transactional
-    @Query( value = "insert into Users (id, login, password, firstName, secondName ) values (, :login, :password, :firstName, :secondName )",
-            nativeQuery = true )
-    void createUser( @Param( "login" ) String login, @Param( "password" ) String password,
-                     @Param( "firstName" ) String firstName, @Param( "secondName" ) String secondName );
+//    @Modifying
+//    @Transactional
+//    @Query( value = "insert into Users (id, login, password, firstName, secondName ) values (, :login, :password, :firstName, :secondName )",
+//            nativeQuery = true )
+//    void createUser( @Param( "login" ) String login, @Param( "password" ) String password,
+//                     @Param( "firstName" ) String firstName, @Param( "secondName" ) String secondName );
 }

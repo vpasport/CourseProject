@@ -33,6 +33,38 @@
         <label for = "pass">Password: </label>
         <p id = "pass" th:text = "${user.getPassword()}" />
     </div>
+    <div>
+        <label for = "age">Age: </label>
+        <p id = "age" th:text = "${user.getAge()}" />
+    </div>
+    <div>
+        <label for = "sex">Sex: </label>
+        <p id = "sex" th:text = "${user.getSex()}" />
+    </div>
+    <div>
+        <label for = "specialty">Specialty: </label>
+        <p id = "specialty" th:text = "${user.getSpecialty()}" />
+    </div>
+    <div>
+        <label for = "role">Role: </label>
+        <p id = "role" th:text = "${user.getRole()}" />
+    </div>
+    <div>
+        <label for = "email">Email: </label>
+        <p id = "email" th:text = "${user.getEmail()}" />
+    </div>
+<!--    <div>-->
+<!--        <label for = "lastActivity">Last activity: </label>-->
+<!--        <p id = "lastActivity" th:text = "${user.getLastActivity()}" />-->
+<!--    </div>-->
+    <div>
+        <label for = "phone">Phone: </label>
+        <p id = "phone" th:text = "${user.getPhone()}" />
+    </div>
+    <div>
+        <label for = "rating">Rating: </label>
+        <p id = "rating" th:text = "${user.getRating()}" />
+    </div>
 </div>
 </body>
 </html>

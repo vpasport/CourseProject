@@ -12,6 +12,9 @@ import ru.isu.CourseProject.model.User;
 import ru.isu.CourseProject.repository.UserRepository;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @RequestMapping( "/users" )
@@ -27,18 +30,35 @@ public class UserController {
         return "user/createUser";
     }
 
+    @ModelAttribute( "roles" )
+    public List<String> getRoles(){
+        return Arrays.asList( "Executor", "Customer", "Admin" );
+    }
+
+    @ModelAttribute( "sex" )
+    public List<String> getSex(){
+        return Arrays.asList( "Male", "Female", "Other" );
+    }
+
     @RequestMapping( value = "/", method = RequestMethod.POST )
     public String create(@Valid @ModelAttribute( "user" ) User user, BindingResult errors, Model model ){
+        System.out.println( errors );
         if( errors.hasErrors() ) return "/index";
 
-        userRepository.createUser(
-                user.getLogin(),
-                user.getPassword(),
-                user.getFirstName(),
-                user.getSecondName()
-        );
+        user.setLastActivity( LocalDate.now() );
+        user.setRating( 0. );
 
-        return "redirect:/user/users";
+        System.out.println( user );
+
+        userRepository.save( user );
+//        userRepository.createUser(
+//                user.getLogin(),
+//                user.getPassword(),
+//                user.getFirstName(),
+//                user.getSecondName()
+//        );
+
+        return "redirect:all";
     }
 
     @RequestMapping( value = "/all", method = RequestMethod.GET)

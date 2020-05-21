@@ -4,6 +4,8 @@ import lombok.*;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -15,7 +17,7 @@ import javax.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     @Column( name = "user_id" )
     private Integer id;
 
@@ -27,4 +29,24 @@ public class User {
     private String login;
 
     private String password;
+
+    @NotBlank( message = "email error" )
+    private String email;
+
+    private LocalDate lastActivity;
+
+    private String role;
+
+    @NotBlank( message = "phone error" )
+    private String phone;
+
+    private Double rating;
+
+    private String sex;
+
+    @Min( value = 18 )
+    @NotBlank( message = "age error" )
+    private Integer age;
+
+    private String specialty;
 }
