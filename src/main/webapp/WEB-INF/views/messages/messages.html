@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Messages</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="../views/header/header :: header" ></div>
+
+<div class="container">
+    <h2 class="text-danger">All messages:</h2>
+    <table class="table">
+        <thead>
+        <th>Id</th>
+        <th>From id</th>
+        <th>To id</th>
+        <th>Message</th>
+        <th>Date</th>
+        </thead>
+        <tbody>
+        <tr th:each="message:${messages}">
+            <td>
+                <a
+                        th:text="${message.getId()}" ></a>
+            </td>
+            <td th:text="${message.getFromId()}" />
+            <td th:text="${message.getToId()}" />
+            <td th:text="${message.getMessage()}" />
+            <td th:text="${message.getDate()}" />
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -19,6 +19,14 @@
         <th>Login</th>
         <th>First name</th>
         <th>Second name</th>
+        <th>Age</th>
+        <th>Sex</th>
+        <th>Specialty</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Rating</th>
+        <th>Role</th>
+        <th>Last activity</th>
         </thead>
         <tbody>
         <tr th:each="user:${users}">
@@ -28,6 +36,14 @@
             <td th:text="${user.getLogin()}" />
             <td th:text="${user.getFirstName()}" />
             <td th:text="${user.getSecondName()}" />
+            <td th:text="${user.getAge()}" />
+            <td th:text="${user.getSex()}" />
+            <td th:text="${user.getSpecialty()}" />
+            <td th:text="${user.getEmail()}" />
+            <td th:text="${user.getPhone()}" />
+            <td th:text="${user.getRating()}" />
+            <td th:text="${user.getRole()}" />
+            <td th:text="${user.getLastActivity()}" />
         </tr>
         </tbody>
     </table>

@@ -62,7 +62,7 @@
             <props>
                 <prop key="hibernate.hbm2ddl.auto">create</prop>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
-                <prop key="hibernate.hbm2ddl.import_files">init_users.sql</prop>
+<!--                <prop key="hibernate.hbm2ddl.import_files">init_users.sql</prop>-->
             </props>
         </property>
     </bean>
