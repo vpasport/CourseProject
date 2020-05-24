@@ -1,9 +1,12 @@
 package ru.isu.CourseProject.model;
 
 import lombok.*;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -18,12 +21,26 @@ public class Message {
     @Column( name = "message_id" )
     private Integer id;
 
-//    @ManyToOne
-    private Integer fromId;
+    @ManyToMany( fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_message",
+        joinColumns = @JoinColumn( name = "user" ),
+        inverseJoinColumns = @JoinColumn( name = "message_id")
+    )
+    private Set<User> from;
 
-    private Integer toId;
+    @ManyToMany( fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "message_user",
+            joinColumns = @JoinColumn( name = "user" ),
+            inverseJoinColumns = @JoinColumn( name = "message_id")
+    )
+    private Set<User> to;
 
-    private String message;
+    @NotBlank( message = "text error" )
+    private String text;
 
     private LocalDate date;
+
+    private LocalTime time;
 }

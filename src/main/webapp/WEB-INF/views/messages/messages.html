@@ -16,21 +16,24 @@
     <table class="table">
         <thead>
         <th>Id</th>
-        <th>From id</th>
-        <th>To id</th>
-        <th>Message</th>
+        <th>From Id</th>
+        <th>To Id</th>
+        <th>Text</th>
         <th>Date</th>
+        <th>Time</th>
         </thead>
         <tbody>
         <tr th:each="message:${messages}">
             <td>
                 <a
+                        th:href="@{/messages/message( id = ${message.getId()} )}"
                         th:text="${message.getId()}" ></a>
             </td>
-            <td th:text="${message.getFromId()}" />
-            <td th:text="${message.getToId()}" />
-            <td th:text="${message.getMessage()}" />
+            <td th:text="${message.getFrom()[0].getId()}" />
+            <td th:text="${message.getTo()[0].getId()}" />
+            <td th:text="${message.getText()}" />
             <td th:text="${message.getDate()}" />
+            <td th:text="${message.getTime()}" />
         </tr>
         </tbody>
     </table>

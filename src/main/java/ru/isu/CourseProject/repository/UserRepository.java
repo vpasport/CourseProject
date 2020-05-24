@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.isu.CourseProject.model.User;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -20,10 +21,32 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query( "from User" )
     List<User> getAll();
 
-//    @Modifying
-//    @Transactional
-//    @Query( value = "insert into Users (id, login, password, firstName, secondName ) values (, :login, :password, :firstName, :secondName )",
-//            nativeQuery = true )
-//    void createUser( @Param( "login" ) String login, @Param( "password" ) String password,
-//                     @Param( "firstName" ) String firstName, @Param( "secondName" ) String secondName );
+    @Query( "select u.id from User as u" )
+    List<Integer> getAllId();
+
+    @Query( "select u from User as u " +
+            "where u.login like :login" )
+    User getByLogin( @Param( "login" ) String login );
+
+//    ( id, firstName, secondName, login, password, email, lastActivity, role, phone, rating, sex, age, specialty )
+
+    @Modifying
+    @Transactional
+    @Query( value = "insert into Users " +
+            "values (, :firstName, :secondName, :login, :password, :email, :lastActivity, :role, :phone, :rating, :sex, :age, :specialty )",
+            nativeQuery = true )
+    void createUser(
+                     @Param( "firstName" ) String firstName,
+                     @Param( "secondName" ) String secondName,
+                     @Param( "login" ) String login,
+                     @Param( "password" ) String password,
+                     @Param( "email" ) String email,
+                     @Param( "lastActivity" ) LocalDate lastActivity,
+                     @Param( "role" ) String role,
+                     @Param( "phone" ) String phone,
+                     @Param( "rating" ) Double rating,
+                     @Param( "sex" ) String sex,
+                     @Param( "age" ) Integer age,
+                     @Param( "specialty" ) String specialty
+    );
 }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create message</title>
+
+    <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="../views/header/header :: header" ></div>
+
+<div class="container">
+    <h2 class="text-danger">Add message:</h2>
+<!--    <div th:text="${users}">-->
+    <form th:action="@{/messages/create}" method="post" th:object="${message}">
+        <div class = "form-group">
+            <label for = "from">From user id: </label>
+            <select id="from" class="form-control" th:field="*{from}">
+                <option
+                        th:each="id:${users}"
+                        th:value="${id}"
+                        th:text="${id}"></option>
+            </select>
+        </div>
+        <div class = "form-group">
+            <label for = "to">To user id: </label>
+            <select id="to" class="form-control" th:field="*{to}">
+                <option
+                        th:each="id:${users}"
+                        th:value="${id}"
+                        th:text="${id}"></option>
+            </select>
+        </div>
+        <div class = "form-group">
+            <label for = "messageText">Message Text: </label>
+            <input id = "messageText" class = "form-control" th:field="*{text}"/>
+        </div>
+        <button class="button" type = "submit">Submit</button>
+    </form>
+</div>
+</body>
+</html>

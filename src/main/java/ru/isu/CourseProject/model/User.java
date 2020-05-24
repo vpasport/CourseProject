@@ -45,7 +45,6 @@ public class User {
     private String sex;
 
     @Min( value = 18 )
-    @NotBlank( message = "age error" )
     private Integer age;
 
     private String specialty;
