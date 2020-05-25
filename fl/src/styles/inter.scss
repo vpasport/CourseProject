@@ -1,0 +1,41 @@
+@import "./styles/global";
+
+h1{
+    font-size: $large;
+}
+
+.form{
+    @extend %back-shadow;
+    border-radius: 20px;
+    padding: 20px;
+    width: 500px;
+    display: grid;
+    grid-template-columns: repeat(1, 100%);
+    grid-row-gap: 20px;
+    max-height: calc(100vh - 75px - 50px);
+    overflow: auto;
+
+    &__send_action-button{
+        min-width: 100px;
+        display: block;
+        margin: auto;
+        @extend %action-button;
+    }
+}
+
+.input-area{
+        
+    &__label{
+        font-size: $medium;
+    }
+
+    &__text-input{
+        width: 100%;
+        margin-top: 5px;
+
+        &_age{
+            width: 60px;
+        }
+    }
+
+}

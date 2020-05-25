@@ -1,0 +1,54 @@
+@import "./styles/colors";
+@import "./styles/fonts";
+
+$low-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+$container: 1200px;
+
+%back-shadow{
+    background: $back;
+    box-shadow: $low-shadow;
+}
+
+%flex-align-center{
+    display: flex;
+    align-items: center;
+}
+
+@mixin round-button($weight){
+    border-radius: 100px;
+    padding: 5px 15px;
+    box-shadow: $low-shadow;
+    background: white;
+    font-weight: $weight;
+    border: none;
+}
+
+%dark-back {
+    background: $back2 !important;
+    color: white !important;
+}
+
+@mixin logo($size) {
+    @extend %flex-align-center;
+    font-size: $size;
+    color: $main-color;
+    font-weight: bold;
+}
+
+%container{
+    width: 1200px;
+    margin: auto;
+}
+
+%action-button{
+    @include round-button(normal);
+    background: $main-color;
+    color: white;
+    text-decoration: none;
+}
+
+@mixin base-flex($justify, $align){
+    display: flex;
+    align-items: $align;
+    justify-content: $justify;
+}

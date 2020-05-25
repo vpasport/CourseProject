@@ -2,3 +2,5 @@
 /workspace.xml
 ../target/*
 ../pom.xml
+../fl/node_modules/*
+../fl/__sapper__/*
