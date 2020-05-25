@@ -29,8 +29,8 @@
                         th:href="@{/messages/message( id = ${message.getId()} )}"
                         th:text="${message.getId()}" ></a>
             </td>
-            <td th:text="${message.getFrom()[0].getId()}" />
-            <td th:text="${message.getTo()[0].getId()}" />
+            <td th:text="${message.getFrom().getId()}" />
+            <td th:text="${message.getTo().getId()}" />
             <td th:text="${message.getText()}" />
             <td th:text="${message.getDate()}" />
             <td th:text="${message.getTime()}" />

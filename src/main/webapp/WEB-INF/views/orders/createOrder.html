@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create order</title>
+
+    <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="../views/header/header :: header" ></div>
+
+<div class="container">
+    <h2 class="text-danger">Add new order:</h2>
+    <form th:action="@{/orders/create}" method="post" th:object="${order}">
+        <div class = "form-group">
+            <label for = "name">Name: </label>
+            <input id = "name" class = "form-control" th:field="*{name}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'name' )}"
+                    th:errors = "${order.name}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "description">Description: </label>
+            <input id = "description" class = "form-control" th:field="*{description}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'description' )}"
+                    th:errors = "${order.description}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "deadline">Dateline: </label>
+            <input type="date" id = "deadline" class = "form-control" th:field="*{deadline}"/>
+        </div>
+        <div class = "form-group">
+            <label for = "category">Category: </label>
+            <select id="category" class="form-control" th:field="*{category}">
+                <option
+                        th:each="category:${categories}"
+                        th:value="${category.getId()}"
+                        th:text="${category.getName()}"></option>
+            </select>
+        </div>
+        <div class = "form-group">
+            <label for = "customer">Customer: </label>
+            <select id="customer" class="form-control" th:field="*{customer}">
+                <option
+                        th:each="id:${customer}"
+                        th:value="${id}"
+                        th:text="${id}"></option>
+            </select>
+        </div>
+        <div class = "form-group">
+            <label for = "maxPrice">Max price: </label>
+            <input id = "maxPrice" class = "form-control" th:field="*{maxPrice}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'maxPrice' )}"
+                    th:errors = "${order.maxPrice}"
+                    class = "text-danger"></span>
+        </div>
+        <button class="button" type = "submit">Submit</button>
+    </form>
+</div>
+</body>
+</html>

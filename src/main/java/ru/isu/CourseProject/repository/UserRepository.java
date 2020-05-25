@@ -1,6 +1,5 @@
 package ru.isu.CourseProject.repository;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +26,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query( "select u from User as u " +
             "where u.login like :login" )
     User getByLogin( @Param( "login" ) String login );
+
+    @Query( "select u.id from User as u " +
+            "where u.role like 'Customer'" )
+    List<Integer> getAllCustomers();
 
 //    ( id, firstName, secondName, login, password, email, lastActivity, role, phone, rating, sex, age, specialty )
 

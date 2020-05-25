@@ -48,4 +48,8 @@ public class User {
     private Integer age;
 
     private String specialty;
+
+    private String status;
+
+    private String description;
 }

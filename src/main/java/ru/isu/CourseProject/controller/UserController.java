@@ -1,6 +1,11 @@
 package ru.isu.CourseProject.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,11 +13,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.isu.CourseProject.model.User;
 import ru.isu.CourseProject.repository.UserRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @Controller
 @RequestMapping( "/users" )
@@ -33,7 +40,7 @@ public class UserController {
     }
 
     @CrossOrigin
-    @RequestMapping( value = "/jsonRoles", method = RequestMethod.GET)
+    @RequestMapping( value = "/jsonRoles", method = RequestMethod.GET )
     public @ResponseBody List<String> getRolesJSON(){
         return Arrays.asList( "Executor", "Customer", "Admin" );
     }
@@ -57,7 +64,8 @@ public class UserController {
     @RequestMapping( value = "/", method = RequestMethod.POST )
     public String create(
             @Valid @ModelAttribute( "user" ) User user,
-            BindingResult errors, Model model ){
+            BindingResult errors, Model model
+    ){
         System.out.println( user );
         if( errors.hasErrors() ) return "/index";
 
@@ -85,13 +93,52 @@ public class UserController {
         return "redirect:all";
     }
 
+    @CrossOrigin
+    @RequestMapping( value = "/createJson", method = RequestMethod.POST )
+    public @ResponseBody String create(
+            @RequestParam( "firstname" ) String firstName,
+            @RequestParam( "secondname" ) String secondName,
+            @RequestParam( "login" ) String login,
+            @RequestParam( "password" ) String password,
+            @RequestParam( "email" ) String email,
+            @RequestParam( "role" ) String role,
+            @RequestParam( "phone" ) String phone,
+            @RequestParam( "sex" ) String sex,
+            @RequestParam( "age" ) Integer age,
+            @RequestParam( "specialty" ) String specialty
+    ){
+        User user = new User();
+
+        System.out.println( login );
+        if( userRepository.getByLogin( login ) == null ) user.setLogin( login );
+        else return "{ status : false, error : 'login' }";
+        user.setFirstName( firstName );
+        user.setSecondName( secondName );
+        user.setPassword( password );
+        user.setEmail( email );
+        user.setRole( role );
+        user.setPhone( phone );
+        user.setSex( sex );
+        if( age >= 18 ) user.setAge( age );
+        else return "{ status : false, error : 'age' }";
+        user.setSpecialty( specialty );
+        user.setLastActivity( LocalDate.now() );
+        user.setRating( 0. );
+
+        System.out.println( user );
+
+        userRepository.save(user);
+
+        return String.format( "{ status : ok, id : %s }", userRepository.getByLogin( login ).getId() );
+    }
+
     /*
         ALL USERS
      */
 
     @CrossOrigin
     @RequestMapping( value = "/allJson", method = RequestMethod.GET )
-    public @ResponseBody List<User> allJSON(){
+    public @ResponseBody List<User> allJSON( HttpServletRequest httpServletRequest ){
         return userRepository.getAll();
     }
 
@@ -123,16 +170,20 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/auth", method = RequestMethod.GET )
-    public @ResponseBody List<User> authUser(
+    public @ResponseBody String authUser(
             @RequestParam( "login" ) String login,
             @RequestParam( "password" ) String password
     ){
+        System.out.println( login );
         User user = userRepository.getByLogin( login );
 
+        System.out.println( user );
+        if( user == null ) return "{ status : false, error : 'user not found' }";
+
         if( user.getPassword().equals( password ) ){
-            return Arrays.asList( user );
+            return String.format( "%s", Arrays.asList( user ) );
         } else {
-            return null;
+            return "{ status : false, error : 'incorrect password' }";
         }
     }
 }

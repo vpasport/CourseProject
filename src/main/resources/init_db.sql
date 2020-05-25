@@ -48,9 +48,9 @@
 -- Дамп данных таблицы `users`
 --
 
-INSERT INTO `users` (`user_id`, `age`, `email`, `firstName`, `lastActivity`, `login`, `password`, `phone`, `rating`, `role`, `secondName`, `sex`, `specialty`) VALUES (1, 20, 'email', 'name', '2020-05-24', 'login', 'pass', 'phone', 0, 'Customer', 'name', 'Other', 'math');
-INSERT INTO `users` (`user_id`, `age`, `email`, `firstName`, `lastActivity`, `login`, `password`, `phone`, `rating`, `role`, `secondName`, `sex`, `specialty`) VALUES (2, 22, 'email2', 'name2', '2020-05-24', 'login2', 'pass2', 'phone2', 0, 'Executor', 'name2', 'male', 'math');
-INSERT INTO `users` (`user_id`, `age`, `email`, `firstName`, `lastActivity`, `login`, `password`, `phone`, `rating`, `role`, `secondName`, `sex`, `specialty`) VALUES (3, 21, 'email3', 'name3', '2020-05-24', 'login3', 'pass3', 'phone3', 0, 'Admin', 'name3', 'female', 'math');
+INSERT INTO `users` (`user_id`, `age`, `description`, `email`, `firstName`, `lastActivity`, `login`, `password`, `phone`, `rating`, `role`, `secondName`, `sex`, `specialty`, `status`) VALUES (1, 20, NULL, 'email1', 'fname1', '2020-05-25', 'login1', 'pass1', 'phone1', 0, 'Executor', 'fname1', 'Male', 'math', NULL);
+INSERT INTO `users` (`user_id`, `age`, `description`, `email`, `firstName`, `lastActivity`, `login`, `password`, `phone`, `rating`, `role`, `secondName`, `sex`, `specialty`, `status`) VALUES (2, 20, NULL, 'email2', 'fname2', '2020-05-25', 'login2', 'pass2', 'phone2', 0, 'Customer', 'fname2', 'Female', 'math', NULL);
+INSERT INTO `users` (`user_id`, `age`, `description`, `email`, `firstName`, `lastActivity`, `login`, `password`, `phone`, `rating`, `role`, `secondName`, `sex`, `specialty`, `status`) VALUES (3, 20, NULL, 'email3', 'fname3', '2020-05-25', 'login3', 'pass3', 'phone3', 0, 'Admin', 'fname3', 'Other', 'math', NULL);
 --
 -- Индексы сохранённых таблиц
 --
@@ -70,6 +70,10 @@ INSERT INTO `users` (`user_id`, `age`, `email`, `firstName`, `lastActivity`, `lo
 --
 ALTER TABLE `users` MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
+
+INSERT INTO `messages` (`message_id`, `date`, `text`, `time`, `from_user_id`, `to_user_id`) VALUES (1, '2020-05-25', 'test', '18:51:49', 1, 2);
+
+INSERT INTO `message_user` (`user`, `message_id`) VALUES (2, 2);
 
 -- /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 -- /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

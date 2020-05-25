@@ -1,12 +1,10 @@
 package ru.isu.CourseProject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.util.ListUtils;
 import ru.isu.CourseProject.model.Message;
 import ru.isu.CourseProject.model.User;
 import ru.isu.CourseProject.repository.MessageRepository;
@@ -67,6 +65,21 @@ public class MessageController {
         return "redirect:all";
     }
 
+    @CrossOrigin
+    @RequestMapping( value = "/createJson", method = RequestMethod.POST )
+    public @ResponseBody String createJson(
+        @RequestParam( "from" ) Integer from,
+        @RequestParam( "to" ) Integer to,
+        @RequestParam( "text" ) String text
+    ){
+        Message message = new Message();
+
+//        message.setFrom( userRepository.searchById( from ) );
+
+
+        return "{ status : ok }";
+    }
+
     @RequestMapping( value = "/create", method = RequestMethod.GET )
     public String create( Model model ){
         Message message = new Message();
@@ -75,8 +88,8 @@ public class MessageController {
     }
 
     @ModelAttribute( "users" )
-    public List<Integer> getUsersId(){
-        return userRepository.getAllId();
+    public List<User> getUsersId(){
+        return userRepository.getAll();
     }
 
     @CrossOrigin

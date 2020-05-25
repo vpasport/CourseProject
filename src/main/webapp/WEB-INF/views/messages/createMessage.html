@@ -19,18 +19,18 @@
             <label for = "from">From user id: </label>
             <select id="from" class="form-control" th:field="*{from}">
                 <option
-                        th:each="id:${users}"
-                        th:value="${id}"
-                        th:text="${id}"></option>
+                        th:each="user:${users}"
+                        th:value="${user.getId()}"
+                        th:text="${user.getId()}"></option>
             </select>
         </div>
         <div class = "form-group">
             <label for = "to">To user id: </label>
             <select id="to" class="form-control" th:field="*{to}">
                 <option
-                        th:each="id:${users}"
-                        th:value="${id}"
-                        th:text="${id}"></option>
+                        th:each="user:${users}"
+                        th:value="${user.getId()}"
+                        th:text="${user.getId()}"></option>
             </select>
         </div>
         <div class = "form-group">

@@ -21,21 +21,11 @@ public class Message {
     @Column( name = "message_id" )
     private Integer id;
 
-    @ManyToMany( fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_message",
-        joinColumns = @JoinColumn( name = "user" ),
-        inverseJoinColumns = @JoinColumn( name = "message_id")
-    )
-    private Set<User> from;
+    @ManyToOne( fetch = FetchType.EAGER)
+    private User from;
 
-    @ManyToMany( fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "message_user",
-            joinColumns = @JoinColumn( name = "user" ),
-            inverseJoinColumns = @JoinColumn( name = "message_id")
-    )
-    private Set<User> to;
+    @ManyToOne( fetch = FetchType.EAGER)
+    private User to;
 
     @NotBlank( message = "text error" )
     private String text;
