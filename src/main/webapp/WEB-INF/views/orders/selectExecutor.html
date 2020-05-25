@@ -2,17 +2,15 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Orders</title>
-
+    <title>Title</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div th:replace="../views/header/header :: header" ></div>
-
-<div class="container">
-    <h2 class="text-danger">All orders:</h2>
+<div class = "container">
+<h2 class="text-danger">All orders:</h2>
     <table class="table">
         <thead>
         <th>Id</th>
@@ -22,15 +20,15 @@
         <th>Deadline</th>
         <th>Category</th>
         <th>Customer</th>
+        <th>Executors</th>
         <th>Max price</th>
-        <th>Final executor</th>
         </thead>
         <tbody>
-        <tr th:each="order:${orders}">
+        <tr>
             <td>
                 <a
                         th:href="@{/orders/getById( id = ${order.getId()} )}"
-                   th:text="${order.getId()}" ></a>
+                        th:text="${order.getId()}" ></a>
             </td>
             <td th:text="${order.getName()}" />
             <td th:text="${order.getDescription()}" />
@@ -38,11 +36,29 @@
             <td th:text="${order.getDeadline()}" />
             <td th:text="${order.getCategory().getName()}" />
             <td th:text="${order.getCustomer()}" />
+<!--            <td th:text="${executors}"/>-->
+            <td>
+                <div th:each="executor:${executors}">
+                    <p th:text="${executor}"></p>
+                </div>
+            </td>
             <td th:text="${order.getMaxPrice()}" />
-            <td th:text="${order.getFinalExecutor().getLogin()}" />
         </tr>
         </tbody>
     </table>
+    <h2>Select final executor</h2>
+    <form th:action="@{/orders/selectexecutor( id = ${order.getId()} )}" method="post" th:object="${user}">
+        <div class = "form-group">
+            <label for = "from">Executor login: </label>
+            <select id="from" class="form-control" th:field="*{login}">
+                <option
+                        th:each="executor:${executors}"
+                        th:value="${executor.getLogin()}"
+                        th:text="${executor.getLogin()}"></option>
+            </select>
+        </div>
+        <button class="button" type = "submit">Submit</button>
+    </form>
 </div>
 </body>
 </html>

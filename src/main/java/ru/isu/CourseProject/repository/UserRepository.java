@@ -27,9 +27,17 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "where u.login like :login" )
     User getByLogin( @Param( "login" ) String login );
 
-    @Query( "select u.id from User as u " +
+    @Query( "select u from User as u " +
             "where u.role like 'Customer'" )
-    List<Integer> getAllCustomers();
+    List<User> getAllCustomers();
+
+    @Query( "select u from User as u " +
+            "where u.role like 'Executor'" )
+    List<User> getAllExecutors();
+
+    @Query( "select u from User as u " +
+            "where u.role like 'Admin'" )
+    List<User> getAllAdmins();
 
 //    ( id, firstName, secondName, login, password, email, lastActivity, role, phone, rating, sex, age, specialty )
 

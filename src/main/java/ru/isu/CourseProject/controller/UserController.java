@@ -67,28 +67,13 @@ public class UserController {
             BindingResult errors, Model model
     ){
         System.out.println( user );
-        if( errors.hasErrors() ) return "/index";
+        if( errors.hasErrors() ) return "/error";
 
         user.setLastActivity( LocalDate.now() );
         user.setRating( 0. );
         System.out.println( user );
 
         userRepository.save( user );
-
-//        userRepository.createUser(
-//                user.getFirstName(),
-//                user.getSecondName(),
-//                user.getLogin(),
-//                user.getPassword(),
-//                user.getEmail(),
-//                user.getLastActivity(),
-//                user.getRole(),
-//                user.getPhone(),
-//                user.getRating(),
-//                user.getSex(),
-//                user.getAge(),
-//                user.getSpecialty()
-//        );
 
         return "redirect:all";
     }
@@ -146,6 +131,26 @@ public class UserController {
     public String all( Model model ){
         model.addAttribute( "users", userRepository.getAll() );
         return "user/users";
+    }
+
+    /*
+        GET ALL EXECUTORS
+     */
+
+    @CrossOrigin
+    @RequestMapping( value = "/getallexecutorsJson", method = RequestMethod.GET )
+    public @ResponseBody List<User> getAllExecutorsJson(){
+        return userRepository.getAllExecutors();
+    }
+
+    /*
+        GET ALL CUSTOMER
+     */
+
+    @CrossOrigin
+    @RequestMapping( value = "/getallcustomerJson", method = RequestMethod.GET )
+    public @ResponseBody List<User> getAllCustomerJson(){
+        return userRepository.getAllCustomers();
     }
 
     /*

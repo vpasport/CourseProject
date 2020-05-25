@@ -30,8 +30,10 @@
                    data-toggle = "dropdown" role = "button"
                    aria-expanded = "false">Orders<span class="caret"></span></a>
                 <ul class = "dropdown-menu" role = "menu">
-                    <li><a th:href="@{/orders/all}">All</a></li>
-                    <li><a th:href = "@{/orders/create}">Add</a></li>
+                    <li><a th:href="@{/orders/all}">All orders</a></li>
+                    <li><a th:href = "@{/orders/create}">Add orders</a></li>
+                    <li><a th:href = "@{/orders/executors}">All executors</a></li>
+                    <li><a th:href = "@{/orders/addexecutor}">Add executors</a></li>
                 </ul>
             </li>
             <li class = "dropdown">

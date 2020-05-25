@@ -1,10 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th = "http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Order</title>
+
+    <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div th:replace="../views/header/header :: header" ></div>
 
+<div class = "container">
+    <h2 class = "text-danger">Order:</h2>
+    <div>
+        <label for = "id">Id: </label>
+        <p id = "id" th:text = "${order.getId()}" />
+    </div>
+    <div>
+        <label for = "name">Name: </label>
+        <p id = "name" th:text = "${order.getName()}" />
+    </div>
+    <div>
+        <label for = "description">Description: </label>
+        <p id = "description" th:text = "${order.getDescription()}" />
+    </div>
+    <div>
+        <label for = "date">Date: </label>
+        <p id = "date" th:text = "${order.getDescription()}" />
+    </div>
+    <div>
+        <label for = "deadline">Deadline: </label>
+        <p id = "deadline" th:text = "${order.getDeadline()}" />
+    </div>
+    <div>
+        <label for = "category">Category: </label>
+        <p id = "category" th:text = "${order.getCategory()}" />
+    </div>
+    <div>
+        <label for = "customer">Customer: </label>
+        <p id = "customer" th:text = "${order.getCustomer()}" />
+    </div>
+    <div>
+        <label for = "maxPrice">Max price: </label>
+        <p id = "maxPrice" th:text = "${order.getMaxPrice()}" />
+    </div>
+    <div>
+        <label for = "fExecutor">Final executor: </label>
+        <p id = "fExecutor" th:text = "${order.getFinalExecutor()}" />
+        <a th:href="@{/orders/selectexecutor( id = ${order.getId()})}" class="btn btn-primary">Select Final executor</a>
+    </div>
+    <div>
+        <label>Executors: </label>
+        <div th:each="executor:${executors}">
+            <p th:text="${executor}" ></p>
+        </div>
+    </div>
+</div>
 </body>
 </html>

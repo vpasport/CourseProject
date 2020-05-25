@@ -1,15 +1,17 @@
 package ru.isu.CourseProject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.isu.CourseProject.model.Category;
+import ru.isu.CourseProject.model.Executors;
 import ru.isu.CourseProject.model.Order;
 import ru.isu.CourseProject.model.User;
 import ru.isu.CourseProject.repository.CategoryRepository;
+import ru.isu.CourseProject.repository.ExecutorsRepository;
 import ru.isu.CourseProject.repository.OrderRepository;
 import ru.isu.CourseProject.repository.UserRepository;
 
@@ -29,6 +31,9 @@ public class OrderController {
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    ExecutorsRepository executorsRepository;
 
     /*
         GET ALL ORDERS
@@ -58,8 +63,8 @@ public class OrderController {
         return "orders/createOrder";
     }
 
-    @ModelAttribute( "customer" )
-    public List<Integer> getCustomers(){
+    @ModelAttribute( "customers" )
+    public List<User> getCustomers(){
         return userRepository.getAllCustomers();
     }
 
@@ -88,12 +93,108 @@ public class OrderController {
         System.out.println( order.getDeadline() );
         System.out.println( order );
         System.out.println( errors );
-        if( errors.hasErrors() ) return "/index";
+        if( errors.hasErrors() ) return "/error";
 
         order.setDate( LocalDate.now() );
 
         orderRepository.save( order );
 
         return "redirect:all";
+    }
+
+    /*
+        GET ORDER BY ID
+     */
+
+    @RequestMapping( value = "/getById", method = RequestMethod.GET )
+    public String getById( @RequestParam( "id" ) Integer id,  Model model ){
+        model.addAttribute( "order", orderRepository.searchById( id ) );
+        model.addAttribute( "executors", executorsRepository.getAllExecutorsByOrderId( id ) );
+        return "orders/order";
+    }
+
+    @CrossOrigin
+    @RequestMapping( value = "/getByIdJson", method = RequestMethod.GET )
+    public @ResponseBody Order getByIdJson( @RequestParam( "id" ) Integer id ){
+        return orderRepository.searchById( id );
+    }
+
+    /*
+        ADD ALL EXECUTORS TABLE
+     */
+
+    @RequestMapping( value = "/executors", method = RequestMethod.GET )
+    public String allExecutors( Model model ){
+        model.addAttribute( "executors", orderRepository.getAllExecutors() );
+        return "orders/executors";
+    }
+
+    /*
+        ADD EXECUTOR BY ID
+     */
+
+    @RequestMapping( value = "/addexecutor", method = RequestMethod.GET )
+    public String createExecutor( Model model ){
+        Executors executors = new Executors();
+        model.addAttribute( "executors", executors );
+
+        return "orders/addExecutors";
+    }
+
+    @ModelAttribute( "orders" )
+    public List<Order> getAllOrders(){
+        return orderRepository.getAll();
+    }
+
+    @ModelAttribute( "execs" )
+    public List<User> getAllExecutor(){
+        System.out.println( userRepository.getAllExecutors() );
+        return userRepository.getAllExecutors();
+    }
+
+    @RequestMapping( value = "/addexecutor", method = RequestMethod.POST )
+    public String addExecutor(
+            @Valid @ModelAttribute( "executors" ) Executors executors,
+            BindingResult errors, Model model
+    ){
+        if( errors.hasErrors() ) return "/error";
+
+        executorsRepository.save( executors );
+
+        return "redirect:executors";
+    }
+
+    /*
+        SELECT FINAL EXECUTOR
+     */
+
+    @RequestMapping( value = "/selectexecutor", method = RequestMethod.GET )
+    public String selectFinalExecutor(
+            @RequestParam( "id" ) Integer id,
+            Model model
+    ){
+        model.addAttribute( "order", orderRepository.searchById( id ) );
+        model.addAttribute( "executors", executorsRepository.getAllExecutorsByOrderId( id ) );
+        model.addAttribute( "user", new User() );
+
+        return "orders/selectExecutor";
+    }
+
+    @RequestMapping( value = "/selectexecutor", method = RequestMethod.POST )
+    public String selectFinalExecutor(
+            @RequestParam( "id" ) Integer id,
+            @ModelAttribute( "user" ) User user,
+            BindingResult errors, Model model
+    ){
+        if( errors.hasErrors() ) return "error";
+
+        Order order = orderRepository.searchById( id );
+        User executor = userRepository.getByLogin( user.getLogin() );
+
+        order.setFinalExecutor( executor );
+
+        orderRepository.save( order );
+
+        return "orders/orders";
     }
 }

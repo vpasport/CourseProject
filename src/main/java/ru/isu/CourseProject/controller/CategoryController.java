@@ -52,7 +52,7 @@ public class CategoryController {
             @Valid @ModelAttribute( "category" ) Category category,
             BindingResult errors, Model model
     ){
-        if( errors.hasErrors() ) return "index";
+        if( errors.hasErrors() ) return "error";
 
         categoryRepository.save( category );
 

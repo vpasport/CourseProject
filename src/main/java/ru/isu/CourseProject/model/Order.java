@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class Order {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
-    @Column( name = "orser_id" )
+    @Column( name = "order_id" )
     private Integer id;
 
     @NotBlank( message = "name error" )

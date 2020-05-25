@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add executors</title>
+    <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="../views/header/header :: header" ></div>
+<div class="container">
+    <h2 class="text-danger">Add executor to order:</h2>
+    <form th:action="@{/orders/addexecutor}" method="post" th:object="${executors}">
+        <div class = "form-group">
+            <label for = "order">Order: </label>
+            <select id="order" class="form-control" th:field="*{order}">
+                <option
+                        th:each="order:${orders}"
+                        th:value="${order.getId()}"
+                        th:text="${order.getId()}"></option>
+            </select>
+        </div>
+        <div class = "form-group">
+            <label for = "executor">Executor: </label>
+            <select id="executor" class="form-control" th:field="*{executors}">
+                <option
+                        th:each="exec:${execs}"
+                        th:value="${exec.getId()}"
+                        th:text="${exec.getLogin()}"></option>
+            </select>
+        </div>
+        <button class="button" type = "submit">Submit</button>
+    </form>
+</div>
+</body>
+</html>

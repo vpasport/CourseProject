@@ -53,7 +53,7 @@ public class MessageController {
     ){
         if( errors.hasErrors() ) {
             System.out.println( errors );
-            return "/index";
+            return "/error";
         }
 
         message.setDate( LocalDate.now() );
@@ -75,7 +75,6 @@ public class MessageController {
         Message message = new Message();
 
 //        message.setFrom( userRepository.searchById( from ) );
-
 
         return "{ status : ok }";
     }

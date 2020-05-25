@@ -18,13 +18,13 @@ public class Executors {
     private Integer id;
 
     @ManyToOne( fetch = FetchType.EAGER )
-    private Order orderId;
+    private Order order;
 
-    @ManyToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+    @ManyToMany( fetch = FetchType.EAGER )
     @JoinTable(
             name = "executors_order",
             joinColumns = @JoinColumn( name =  "executor_id" ),
             inverseJoinColumns = @JoinColumn( name = "order_id" )
     )
-    private Set<User> executorId;
+    private Set<User> executors;
 }
