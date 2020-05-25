@@ -124,7 +124,9 @@ public class UserController {
     @CrossOrigin
     @RequestMapping( value = "/allJson", method = RequestMethod.GET )
     public @ResponseBody List<User> allJSON( HttpServletRequest httpServletRequest ){
-        return userRepository.getAll();
+        List<User> users = userRepository.getAll();
+        for( User user : users ) user.setPassword( null );
+        return users;
     }
 
     @RequestMapping( value = "/all", method = RequestMethod.GET)
@@ -140,7 +142,9 @@ public class UserController {
     @CrossOrigin
     @RequestMapping( value = "/getallexecutorsJson", method = RequestMethod.GET )
     public @ResponseBody List<User> getAllExecutorsJson(){
-        return userRepository.getAllExecutors();
+        List<User> users = userRepository.getAllExecutors();
+        for( User user : users ) user.setPassword( null );
+        return users;
     }
 
     /*
@@ -150,6 +154,8 @@ public class UserController {
     @CrossOrigin
     @RequestMapping( value = "/getallcustomerJson", method = RequestMethod.GET )
     public @ResponseBody List<User> getAllCustomerJson(){
+        List<User> users = userRepository.getAllCustomers();
+        for( User user : users ) user.setPassword( null );
         return userRepository.getAllCustomers();
     }
 
@@ -165,8 +171,10 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/getByIdJson", method = RequestMethod.GET )
-    public @ResponseBody List<User> getByIdJson( @RequestParam( "id" ) Integer id ){
-        return  Arrays.asList( userRepository.searchById( id ) );
+    public @ResponseBody User getByIdJson( @RequestParam( "id" ) Integer id ){
+        User user = userRepository.searchById( id );
+        user.setPassword( null );
+        return user;
     }
 
     /*
@@ -186,7 +194,8 @@ public class UserController {
         if( user == null ) return "{ status : false, error : 'user not found' }";
 
         if( user.getPassword().equals( password ) ){
-            return String.format( "%s", Arrays.asList( user ) );
+            user.setPassword( null );
+            return String.format( "%s", user  );
         } else {
             return "{ status : false, error : 'incorrect password' }";
         }

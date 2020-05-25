@@ -17,7 +17,9 @@ import ru.isu.CourseProject.repository.UserRepository;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping( "/orders" )
@@ -65,7 +67,9 @@ public class OrderController {
 
     @ModelAttribute( "customers" )
     public List<User> getCustomers(){
-        return userRepository.getAllCustomers();
+        List<User> users = userRepository.getAllCustomers();
+        for( User user : users ) user.setPassword( null );
+        return users;
     }
 
     @CrossOrigin
@@ -148,8 +152,9 @@ public class OrderController {
 
     @ModelAttribute( "execs" )
     public List<User> getAllExecutor(){
-        System.out.println( userRepository.getAllExecutors() );
-        return userRepository.getAllExecutors();
+        List<User> users = userRepository.getAllExecutors();
+        for( User user : users ) user.setPassword( null );
+        return users;
     }
 
     @RequestMapping( value = "/addexecutor", method = RequestMethod.POST )
@@ -162,6 +167,19 @@ public class OrderController {
         executorsRepository.save( executors );
 
         return "redirect:executors";
+    }
+
+    @CrossOrigin
+    @RequestMapping( value = "/addexecutorJson", method = RequestMethod.POST )
+    public @ResponseBody String addExecutorJson(
+            @RequestParam( "orderid" ) Integer orderId,
+            @RequestParam( "executorid" ) Integer executorId
+    ){
+        Executors executor = new Executors();
+        executor.setOrder( orderRepository.searchById( orderId ) );
+//        executor.setExecutors(  );
+
+        return "a";
     }
 
     /*
