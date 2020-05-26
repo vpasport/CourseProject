@@ -4,3 +4,5 @@
 ../pom.xml
 ../fl/node_modules/*
 ../fl/__sapper__/*
+../lib/*
+../kek/*

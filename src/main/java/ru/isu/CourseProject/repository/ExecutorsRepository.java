@@ -13,4 +13,8 @@ public interface ExecutorsRepository extends JpaRepository<Executors, Integer> {
     @Query( "select e.executors from Executors as e " +
             "where e.order.id = :id" )
     List<User> getAllExecutorsByOrderId( @Param( "id" ) Integer id );
+
+    @Query( "select e from Executors as e " +
+            "where e.id = :id" )
+    Executors getById( @Param( "id" ) Integer id );
 }

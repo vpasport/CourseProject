@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Controller
 @RequestMapping( "/orders" )
@@ -94,9 +95,6 @@ public class OrderController {
             @Valid @ModelAttribute( "order" ) Order order,
             BindingResult errors, Model model
     ){
-        System.out.println( order.getDeadline() );
-        System.out.println( order );
-        System.out.println( errors );
         if( errors.hasErrors() ) return "/error";
 
         order.setDate( LocalDate.now() );
@@ -123,6 +121,14 @@ public class OrderController {
         return orderRepository.searchById( id );
     }
 
+    @CrossOrigin
+    @RequestMapping( value = "/getexecutorsbyorderidJson", method = RequestMethod.GET )
+    public @ResponseBody List<User> getExecutorsByOrderId( @RequestParam( "orderid" ) Integer orderId ){
+        List<User> users = executorsRepository.getAllExecutorsByOrderId( orderId );
+        for( User user : users ) user.setPassword( null );
+        return users;
+    }
+
     /*
         ADD ALL EXECUTORS TABLE
      */
@@ -131,6 +137,12 @@ public class OrderController {
     public String allExecutors( Model model ){
         model.addAttribute( "executors", orderRepository.getAllExecutors() );
         return "orders/executors";
+    }
+
+    @CrossOrigin
+    @RequestMapping( value = "/executorsJson", method = RequestMethod.GET )
+    public @ResponseBody List<Executors> allExecutorsJson(){
+        return orderRepository.getAllExecutors();
     }
 
     /*
@@ -175,11 +187,15 @@ public class OrderController {
             @RequestParam( "orderid" ) Integer orderId,
             @RequestParam( "executorid" ) Integer executorId
     ){
-        Executors executor = new Executors();
-        executor.setOrder( orderRepository.searchById( orderId ) );
-//        executor.setExecutors(  );
+        Executors executors = new Executors();
+        executors.setOrder( orderRepository.searchById( orderId ) );
+        Set<User> users = new TreeSet<User>();
+        users.add( userRepository.searchById( executorId ) );
+        executors.setExecutors( users );
 
-        return "a";
+        executorsRepository.save( executors );
+
+        return "{ status : ok }";
     }
 
     /*
@@ -214,5 +230,17 @@ public class OrderController {
         orderRepository.save( order );
 
         return "orders/orders";
+    }
+
+    @CrossOrigin
+    @RequestMapping( value = "/selectexecutorJson", method = RequestMethod.POST )
+    public @ResponseBody String selectFinalExecutor(
+            @RequestParam( "orderid" ) Integer orderId,
+            @RequestParam( "userid" ) Integer userId
+    ){
+        Order order = orderRepository.searchById( orderId );
+        order.setFinalExecutor( userRepository.searchById( userId ) );
+        orderRepository.save( order );
+        return "{ status : ok }";
     }
 }
