@@ -1,13 +1,15 @@
-package ru.isu.CourseProject.repository;
+package ru.isu.CourseProject.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.isu.CourseProject.model.Executors;
-import ru.isu.CourseProject.model.User;
+import org.springframework.stereotype.Repository;
+import ru.isu.CourseProject.domain.model.Executors;
+import ru.isu.CourseProject.domain.model.User;
 
 import java.util.List;
 
+@Repository
 public interface ExecutorsRepository extends JpaRepository<Executors, Integer> {
 
     @Query( "select e.executors from Executors as e " +

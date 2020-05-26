@@ -1,11 +1,10 @@
-package ru.isu.CourseProject.repository;
+package ru.isu.CourseProject.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.isu.CourseProject.model.Message;
-import ru.isu.CourseProject.model.User;
+import ru.isu.CourseProject.domain.model.Message;
 
 import java.util.List;
 

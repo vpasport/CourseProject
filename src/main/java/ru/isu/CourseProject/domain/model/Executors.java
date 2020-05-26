@@ -1,4 +1,4 @@
-package ru.isu.CourseProject.model;
+package ru.isu.CourseProject.domain.model;
 
 import lombok.*;
 

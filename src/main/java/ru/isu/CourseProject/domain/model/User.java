@@ -1,11 +1,15 @@
-package ru.isu.CourseProject.model;
+package ru.isu.CourseProject.domain.model;
 
 import lombok.*;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.time.LocalDate;
+import java.util.Collection;
 
 @Entity
 @Getter
@@ -14,7 +18,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @ToString
 @Table( name = "users" )
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
@@ -52,4 +56,34 @@ public class User {
     private String status;
 
     private String description;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return AuthorityUtils.createAuthorityList(this.role);
+    }
+
+    @Override
+    public String getUsername() {
+        return this.getLogin();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

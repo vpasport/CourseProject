@@ -1,23 +1,22 @@
-package ru.isu.CourseProject.controller;
+package ru.isu.CourseProject.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.isu.CourseProject.model.Category;
-import ru.isu.CourseProject.model.Executors;
-import ru.isu.CourseProject.model.Order;
-import ru.isu.CourseProject.model.User;
-import ru.isu.CourseProject.repository.CategoryRepository;
-import ru.isu.CourseProject.repository.ExecutorsRepository;
-import ru.isu.CourseProject.repository.OrderRepository;
-import ru.isu.CourseProject.repository.UserRepository;
+import ru.isu.CourseProject.domain.model.Category;
+import ru.isu.CourseProject.domain.model.Executors;
+import ru.isu.CourseProject.domain.model.Order;
+import ru.isu.CourseProject.domain.model.User;
+import ru.isu.CourseProject.domain.repository.CategoryRepository;
+import ru.isu.CourseProject.domain.repository.ExecutorsRepository;
+import ru.isu.CourseProject.domain.repository.OrderRepository;
+import ru.isu.CourseProject.domain.repository.UserRepository;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -51,6 +50,7 @@ public class OrderController {
 
     @CrossOrigin
     @RequestMapping( value = "/allJson", method =  RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<Order> getAllJson(){
         return orderRepository.getAll();
     }
@@ -117,6 +117,7 @@ public class OrderController {
 
     @CrossOrigin
     @RequestMapping( value = "/getByIdJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody Order getByIdJson( @RequestParam( "id" ) Integer id ){
         return orderRepository.searchById( id );
     }
@@ -141,6 +142,7 @@ public class OrderController {
 
     @CrossOrigin
     @RequestMapping( value = "/executorsJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<Executors> allExecutorsJson(){
         return orderRepository.getAllExecutors();
     }
@@ -183,6 +185,7 @@ public class OrderController {
 
     @CrossOrigin
     @RequestMapping( value = "/addexecutorJson", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody String addExecutorJson(
             @RequestParam( "orderid" ) Integer orderId,
             @RequestParam( "executorid" ) Integer executorId
@@ -234,6 +237,7 @@ public class OrderController {
 
     @CrossOrigin
     @RequestMapping( value = "/selectexecutorJson", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody String selectFinalExecutor(
             @RequestParam( "orderid" ) Integer orderId,
             @RequestParam( "userid" ) Integer userId

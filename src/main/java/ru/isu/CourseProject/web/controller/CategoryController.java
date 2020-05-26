@@ -1,12 +1,13 @@
-package ru.isu.CourseProject.controller;
+package ru.isu.CourseProject.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.isu.CourseProject.model.Category;
-import ru.isu.CourseProject.repository.CategoryRepository;
+import ru.isu.CourseProject.domain.model.Category;
+import ru.isu.CourseProject.domain.repository.CategoryRepository;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -31,6 +32,7 @@ public class CategoryController {
 
     @CrossOrigin
     @RequestMapping( value = "/allJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<Category> getAll(){
         return categoryRepository.getAll();
     }
@@ -61,6 +63,7 @@ public class CategoryController {
 
     @CrossOrigin
     @RequestMapping( value = "/createJson", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody String createJson(
             @RequestParam( "name" ) String name,
             @RequestParam( "description" ) String description

@@ -5,11 +5,13 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.8.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
     <mvc:annotation-driven/>
     <context:component-scan base-package = "ru.isu.CourseProject" />
@@ -22,10 +24,17 @@
         <property name = "cacheable" value = "true" />
     </bean>
 
-    <bean id = "templateEngine"
-          class = "org.thymeleaf.spring4.SpringTemplateEngine">
-        <property name = "templateResolver" ref = "templateResolver" />
-        <property name = "enableSpringELCompiler" value = "true" />
+    <bean id="templateEngine"
+          class="org.thymeleaf.spring4.SpringTemplateEngine">
+        <property name="templateResolver" ref="templateResolver" />
+        <property name="enableSpringELCompiler" value="true" />
+        <!--Security addon -->
+        <property name="additionalDialects">
+            <set>
+                <!-- Note the package would change to 'springsecurity[3|4]' if you are using that version -->
+                <bean class="org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect"/>
+            </set>
+        </property>
     </bean>
 
     <bean id = "viewResolver" class = "org.thymeleaf.spring4.view.ThymeleafViewResolver">
@@ -38,39 +47,39 @@
     <mvc:resources location = "/resources/" mapping = "/resources/**"/>
 
     <!--    Rerository-->
-    <jpa:repositories base-package="ru.isu.CourseProject.repository"/>
-    <tx:annotation-driven/>
+<!--    <jpa:repositories base-package="ru.isu.CourseProject.domain.repository"/>-->
+<!--    <tx:annotation-driven/>-->
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://localhost:3306/courseproject" />
-        <property name="username" value="root" />
-        <property name="password" value="" />
-    </bean>
+<!--    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+<!--        <property name="driverClassName" value="com.mysql.jdbc.Driver" />-->
+<!--        <property name="url" value="jdbc:mysql://localhost:3306/courseproject" />-->
+<!--        <property name="username" value="root" />-->
+<!--        <property name="password" value="" />-->
+<!--    </bean>-->
 
-    <bean id="entityManagerFactory"
-          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <property name="packagesToScan" value="ru.isu.CourseProject.model" />
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="generateDdl" value="true" />
-                <property name="showSql" value="true"/>
-            </bean>
-        </property>
-        <property name="jpaProperties">
-            <props>
-                <prop key="hibernate.hbm2ddl.auto">validate</prop>
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
-                <prop key="hibernate.hbm2ddl.import_files">init_db.sql</prop>
-<!--                <prop key="hibernate.hbm2ddl.import_files">init_books.sql</prop>-->
-            </props>
-        </property>
-    </bean>
+<!--    <bean id="entityManagerFactory"-->
+<!--          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">-->
+<!--        <property name="dataSource" ref="dataSource" />-->
+<!--        <property name="packagesToScan" value="ru.isu.CourseProject.domain.model" />-->
+<!--        <property name="jpaVendorAdapter">-->
+<!--            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">-->
+<!--                <property name="generateDdl" value="true" />-->
+<!--                <property name="showSql" value="true"/>-->
+<!--            </bean>-->
+<!--        </property>-->
+<!--        <property name="jpaProperties">-->
+<!--            <props>-->
+<!--                <prop key="hibernate.hbm2ddl.auto">validate</prop>-->
+<!--                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>-->
+<!--                <prop key="hibernate.hbm2ddl.import_files">init_db.sql</prop>-->
+<!--&lt;!&ndash;                <prop key="hibernate.hbm2ddl.import_files">init_books.sql</prop>&ndash;&gt;-->
+<!--            </props>-->
+<!--        </property>-->
+<!--    </bean>-->
 
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
+<!--    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">-->
+<!--        <property name="entityManagerFactory" ref="entityManagerFactory"/>-->
+<!--    </bean>-->
 
     <!--Data conversion service-->
     <mvc:annotation-driven conversion-service="conversionService">
@@ -95,5 +104,8 @@
     <bean class="org.springframework.data.repository.support.DomainClassConverter">
         <constructor-arg name="conversionService" ref="conversionService"/>
     </bean>
+
+    <!--Securiry Pre/Post-->
+    <security:global-method-security pre-post-annotations="enabled"/>
 
 </beans>

@@ -1,14 +1,15 @@
-package ru.isu.CourseProject.controller;
+package ru.isu.CourseProject.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.isu.CourseProject.model.Message;
-import ru.isu.CourseProject.model.User;
-import ru.isu.CourseProject.repository.MessageRepository;
-import ru.isu.CourseProject.repository.UserRepository;
+import ru.isu.CourseProject.domain.model.Message;
+import ru.isu.CourseProject.domain.model.User;
+import ru.isu.CourseProject.domain.repository.MessageRepository;
+import ru.isu.CourseProject.domain.repository.UserRepository;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -67,6 +68,7 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/createJson", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody String createJson(
         @RequestParam( "from" ) Integer from,
         @RequestParam( "to" ) Integer to,
@@ -93,6 +95,7 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/usersJson", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<Integer> getRolesJSON(){
         return userRepository.getAllId();
     }
@@ -110,6 +113,7 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/messageJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<Message> getByIdJson( @RequestParam( "id" ) Integer id ){
         return Arrays.asList( messageRepository.getMessageById( id ) );
     }
@@ -134,6 +138,7 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/message2idJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<Message> getById2Json(
             @RequestParam( "id1" ) Integer id1,
             @RequestParam( "id2" ) Integer id2

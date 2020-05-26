@@ -1,25 +1,21 @@
-package ru.isu.CourseProject.controller;
+package ru.isu.CourseProject.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.isu.CourseProject.model.User;
-import ru.isu.CourseProject.repository.UserRepository;
+import ru.isu.CourseProject.domain.model.User;
+import ru.isu.CourseProject.domain.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping( "/users" )
@@ -41,17 +37,19 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/jsonRoles", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<String> getRolesJSON(){
         return Arrays.asList( "Executor", "Customer", "Admin" );
     }
 
     @ModelAttribute( "roles" )
     public List<String> getRoles(){
-        return Arrays.asList( "Executor", "Customer", "Admin" );
+        return Arrays.asList( "ROLE_EXECUTOR", "ROLE_CUSTOMER", "ROLE_ADMIN" );
     }
 
     @CrossOrigin
     @RequestMapping( value = "/jsonSex", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<String> getSexJSON(){
         return Arrays.asList( "Male", "Female", "Other" );
     }
@@ -80,6 +78,7 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/createJson", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody String create(
             @RequestParam( "firstname" ) String firstName,
             @RequestParam( "secondname" ) String secondName,
@@ -123,6 +122,7 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/allJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<User> allJSON( HttpServletRequest httpServletRequest ){
         List<User> users = userRepository.getAll();
         for( User user : users ) user.setPassword( null );
@@ -141,6 +141,7 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/getallexecutorsJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<User> getAllExecutorsJson(){
         List<User> users = userRepository.getAllExecutors();
         for( User user : users ) user.setPassword( null );
@@ -153,6 +154,7 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/getallcustomerJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody List<User> getAllCustomerJson(){
         List<User> users = userRepository.getAllCustomers();
         for( User user : users ) user.setPassword( null );
@@ -171,6 +173,7 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/getByIdJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     public @ResponseBody User getByIdJson( @RequestParam( "id" ) Integer id ){
         User user = userRepository.searchById( id );
         user.setPassword( null );

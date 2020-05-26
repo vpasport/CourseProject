@@ -1,4 +1,4 @@
-package ru.isu.CourseProject.model;
+package ru.isu.CourseProject.domain.model;
 
 import lombok.*;
 import org.hibernate.validator.constraints.NotBlank;
@@ -6,7 +6,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Set;
 
 @Entity
 @Setter
