@@ -18,31 +18,15 @@ import ru.isu.CourseProject.domain.model.User;
 @RequestMapping
 @Controller
 public class MainController {
-    public static final String DEFAULT_CSRF_TOKEN_ATTR_NAME = HttpSessionCsrfTokenRepository.class.getName().concat(".CSRF_TOKEN");
-
-    @Autowired
-    private HttpSession httpSession;
 
     @RequestMapping( value = "/", method = RequestMethod.GET )
-    public String index( HttpServletRequest httpServletRequest, Model model ){
-//        System.out.println( httpServletRequest.getSession().getServletContext().getSessionCookieConfig().getComment() );
-        System.out.println( httpServletRequest.getSession().getId() );
-//        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-//        HttpSession session = attr.getRequest().getSession();
-//        System.out.println( session.getServletContext() );
-//        return "login";
+    public String index(){
         return "index";
-    }
-
-    @RequestMapping( "/getsession" )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
-    public @ResponseBody String getHttpSession( HttpServletRequest httpServletRequest ){
-        System.out.println( httpServletRequest.getSession().getId() );
-        return httpServletRequest.getSession().getAttribute(DEFAULT_CSRF_TOKEN_ATTR_NAME).toString();
     }
 
     @RequestMapping(value="/login", method= RequestMethod.GET)
     public String goLogin( Model model ){
         return "login";
     }
+
 }

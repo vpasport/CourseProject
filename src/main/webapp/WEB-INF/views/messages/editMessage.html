@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit message</title>
+
+    <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="../views/header/header :: header" ></div>
+
+<div class = "container">
+    <h2 class = "text-danger">Message:</h2>
+    <form th:action="@{/messages/create}" method="post" th:object="${message}">
+        <div>
+            <label for = "id">Id: </label>
+            <p id = "id" th:text = "${message.getId()}" />
+            <input type="hidden" th:value="${message.getId()}" th:field="*{id}">
+        </div>
+        <div>
+            <label for = "login">From: </label>
+            <p id = "login" th:text = "${message.getFrom()}" />
+            <input type="hidden" th:value="${message.getFrom()}" th:field="*{from}">
+        </div>
+        <div>
+            <label for = "to">To: </label>
+            <select id="to" class="form-control" th:field="*{to}" th:value="${message.getId()}">
+                <option
+                        th:each="user:${users}"
+                        th:value="${user.getId()}"
+                        th:text="${user.getId()}"></option>
+            </select>
+        </div>
+        <div>
+            <label for = "date">Date: </label>
+            <input id="date" type="date" th:value="${message.getDate()}" th:field="*{date}">
+        </div>
+        <div>
+            <label for = "time">Time: </label>
+            <input id="time" type="time" th:value="${message.getTime()}" th:field="*{time}">
+        </div>
+        <div>
+            <label for = "text">Text: </label>
+            <input id="text" th:value="${message.getText()}" th:field="*{text}">
+        </div>
+        <button class="button" type = "submit">Submit</button>
+    </form>
+</div>
+</body>
+</html>

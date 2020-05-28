@@ -11,10 +11,14 @@ import java.util.List;
 
 @Repository
 public interface ExecutorsRepository extends JpaRepository<Executors, Integer> {
+//"inner join m.from as u1 " +
 
-    @Query( "select e.executors from Executors as e " +
-            "where e.order.id = :id" )
+    @Query( "select u from Executors as e " +
+            "inner join e.orders as o " +
+            "inner join e.executors as u " +
+            "where o.id = :id" )
     List<User> getAllExecutorsByOrderId( @Param( "id" ) Integer id );
+//        "where u1.id = :from and u2.id = :to"
 
     @Query( "select e from Executors as e " +
             "where e.id = :id" )

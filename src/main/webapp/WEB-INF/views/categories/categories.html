@@ -15,12 +15,16 @@
     <h2 class="text-danger">All categories:</h2>
     <table class="table">
         <thead>
+        <th>Delete</th>
         <th>Id</th>
         <th>Name</th>
         <th>description</th>
         </thead>
         <tbody>
         <tr th:each="category:${categories}">
+            <td>
+                <a th:href="@{/categories/deletebyid( id = ${category.getId()} )}" class="btn btn-primary">Delete</a>
+            </td>
             <td th:text="${category.getId()}" />
             <td th:text="${category.getName()}" />
             <td th:text="${category.getDescription()}" />

@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.context.request.RequestContextHolder;
 import ru.isu.CourseProject.domain.model.User;
 import ru.isu.CourseProject.domain.repository.UserRepository;
 
@@ -19,21 +21,21 @@ import java.util.Formatter;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-    @Autowired
+//    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    public CustomAuthenticationProvider( UserRepository userRepository ){
+        this.userRepository = userRepository;
+    }
 
     @SneakyThrows
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        System.out.println( authentication.getDetails() );
-
-        String name = authentication.getName();
-        String password = authentication.getCredentials().toString();
-
-        System.out.println( name );
-        System.out.println( password );
-
+        System.out.println( authentication.getName() );
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
+        System.out.println( token.getName() );
+        System.out.println( userRepository );
         User user = userRepository.getByLogin( token.getName() );
         System.out.println( user );
         if (user==null || !user.getPassword().equalsIgnoreCase( getHash( token.getCredentials().toString()) ) ){
@@ -41,7 +43,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
         UsernamePasswordAuthenticationToken token2 = new UsernamePasswordAuthenticationToken(user,user.getPassword(), user.getAuthorities());
 
-        System.out.println(SecurityContextHolder.getContext());
+        System.out.println( token2 );
         return token2;
     }
 

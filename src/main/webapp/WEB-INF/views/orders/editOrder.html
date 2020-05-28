@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit order</title>
+    <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="../views/header/header :: header" ></div>
+
+<div class = "container">
+    <h2 class = "text-danger">Edit order:</h2>
+    <form th:action="@{/orders/create}" method="post" th:object="${order}">
+        <div>
+            <label for = "id">Id: </label>
+            <p id = "id" th:text = "${order.getId()}" />
+        </div>
+        <div class = "form-group">
+            <label for = "name">Name: </label>
+            <input id = "name" class = "form-control" th:field="*{name}" th:value="${order.getName()}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'name' )}"
+                    th:errors = "${order.name}"
+                    class = "text-danger"></span>
+        </div>
+        <div>
+            <label for = "description">Description: </label>
+            <input id = "description" class = "form-control" th:field="*{description}" th:value="${order.getDescription()}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'description' )}"
+                    th:errors = "${order.description}"
+                    class = "text-danger"></span>
+        </div>
+        <div>
+            <label for = "date">Date: </label>
+            <input type="date" id = "date" class = "form-control" th:field="*{date}" th:value="${order.getDate()}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'date' )}"
+                    th:errors = "${order.date}"
+                    class = "text-danger"></span>
+        </div>
+        <div>
+            <label for = "deadline">Deadline: </label>
+            <input type="date" id = "deadline" class = "form-control" th:field="*{deadline}" th:value="${order.getDeadline()}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'deadline' )}"
+                    th:errors = "${order.deadline}"
+                    class = "text-danger"></span>
+        </div>
+        <div>
+            <label for = "category">Category: </label>
+            <select id="category" class="form-control" th:field="*{category}">
+                <option
+                        th:each="category:${categories}"
+                        th:value="${category.getId()}"
+                        th:text="${category.getName()}"></option>
+            </select>
+        </div>
+        <div>
+            <label for = "customer">Customer: </label>
+            <p id = "customer" th:text = "${order.getCustomer()}" />
+        </div>
+        <div>
+            <label for = "maxPrice">Max price: </label>
+            <input id = "maxPrice" class = "form-control" th:field="*{maxPrice}" th:value="${order.getMaxPrice()}"/>
+            <span
+                    th:if = "${#fields.hasErrors( 'maxPrice' )}"
+                    th:errors = "${order.maxPrice}"
+                    class = "text-danger"></span>
+        </div>
+        <div>
+            <label for = "fExecutor">Final executor: </label>
+            <p id = "fExecutor" th:text = "${order.getFinalExecutor()}" />
+            <a th:href="@{/orders/selectexecutor( id = ${order.getId()})}" class="btn btn-primary">Select Final executor</a>
+        </div>
+        <div>
+            <label>Executors: </label>
+            <div th:each="executor:${executors}">
+                <p th:text="${executor}" ></p>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

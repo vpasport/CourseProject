@@ -23,20 +23,22 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<Integer> getAllId();
 
     @Query( "select u from User as u " +
-            "where u.login like :login" )
+            "where u.login = :login" )
     User getByLogin( @Param( "login" ) String login );
 
     @Query( "select u from User as u " +
-            "where u.role like 'Customer'" )
-    List<User> getAllCustomers();
+            "where u.role = :role" )
+    List<User> getAllByRole(
+            @Param( "role" ) String role
+    );
 
-    @Query( "select u from User as u " +
-            "where u.role like 'Executor'" )
-    List<User> getAllExecutors();
-
-    @Query( "select u from User as u " +
-            "where u.role like 'Admin'" )
-    List<User> getAllAdmins();
+    @Modifying
+    @Transactional
+    @Query( "delete from User as u " +
+            "where u.id = :id " )
+    void deleteById(
+      @Param( "id" ) Integer id
+    );
 
 //    ( id, firstName, secondName, login, password, email, lastActivity, role, phone, rating, sex, age, specialty )
 

@@ -24,6 +24,7 @@ public class CategoryController {
      */
 
     @RequestMapping( value = "/all", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String all( Model model ){
         model.addAttribute( "categories", categoryRepository.getAll() );
 
@@ -32,7 +33,7 @@ public class CategoryController {
 
     @CrossOrigin
     @RequestMapping( value = "/allJson", method = RequestMethod.GET )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody List<Category> getAll(){
         return categoryRepository.getAll();
     }
@@ -42,6 +43,7 @@ public class CategoryController {
      */
 
     @RequestMapping( value = "/create", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String create( Model model ){
         Category category = new Category();
         model.addAttribute( "category", category );
@@ -50,6 +52,7 @@ public class CategoryController {
     }
 
     @RequestMapping( value = "/create", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String create(
             @Valid @ModelAttribute( "category" ) Category category,
             BindingResult errors, Model model
@@ -63,7 +66,7 @@ public class CategoryController {
 
     @CrossOrigin
     @RequestMapping( value = "/createJson", method = RequestMethod.POST )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody String createJson(
             @RequestParam( "name" ) String name,
             @RequestParam( "description" ) String description
@@ -84,6 +87,7 @@ public class CategoryController {
      */
 
     @RequestMapping( value = "/categorybyidJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public @ResponseBody Category getByIdJson(
             @RequestParam( "id" ) Integer id
     ){
@@ -95,6 +99,7 @@ public class CategoryController {
      */
 
     @RequestMapping( value = "/categorybynameJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public @ResponseBody Category getByNameJson(
             @RequestParam( "name" ) String name
     ){
@@ -102,7 +107,23 @@ public class CategoryController {
     }
 
     @RequestMapping( value = "/categoriesnamesJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public @ResponseBody List<String> getAllNameJson(){
         return categoryRepository.getAllNames();
+    }
+
+    /*
+        DELETE BY ID
+     */
+
+    @RequestMapping( value = "/deletebyid", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deleteById(
+            @RequestParam( "id" ) Integer id,
+            Model model
+    ){
+        categoryRepository.deleteById( id );
+
+        return "redirect:all";
     }
 }

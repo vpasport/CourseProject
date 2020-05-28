@@ -14,7 +14,7 @@
     <form th:action="@{/orders/addexecutor}" method="post" th:object="${executors}">
         <div class = "form-group">
             <label for = "order">Order: </label>
-            <select id="order" class="form-control" th:field="*{order}">
+            <select id="order" class="form-control" th:field="*{orders}">
                 <option
                         th:each="order:${orders}"
                         th:value="${order.getId()}"

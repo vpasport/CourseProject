@@ -17,8 +17,13 @@ public class Executors {
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Integer id;
 
-    @ManyToOne( fetch = FetchType.EAGER )
-    private Order order;
+    @ManyToMany( fetch = FetchType.EAGER )
+    @JoinTable(
+            name = "order_executors",
+            joinColumns = @JoinColumn( name = "ordrer_id" ),
+            inverseJoinColumns = @JoinColumn( name = "executors_id" )
+    )
+    private Set<Order> orders;
 
     @ManyToMany( fetch = FetchType.EAGER )
     @JoinTable(

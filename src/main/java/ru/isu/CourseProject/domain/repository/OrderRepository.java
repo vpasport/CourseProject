@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.isu.CourseProject.domain.model.Executors;
 import ru.isu.CourseProject.domain.model.Order;
 import ru.isu.CourseProject.domain.model.User;
@@ -31,4 +32,12 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             @Param( "order" ) Integer order,
             @Param( "executor" ) User executor
             );
+
+    @Modifying
+    @Transactional
+    @Query( "delete from Order as o " +
+            "where o.id = :id" )
+    void deleteById(
+            @Param( "id" ) Integer id
+    );
 }

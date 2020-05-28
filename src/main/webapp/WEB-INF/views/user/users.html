@@ -15,6 +15,7 @@
     <h2 class="text-danger">All users:</h2>
     <table class="table">
         <thead>
+        <th>Delete</th>
         <th>Id</th>
         <th>Login</th>
         <th>First name</th>
@@ -30,6 +31,9 @@
         </thead>
         <tbody>
         <tr th:each="user:${users}">
+            <td>
+                <a th:href="@{/users/deletebyid( id = ${user.getId()} )}" class="btn btn-primary">Delete</a>
+            </td>
             <td>
                 <a th:href="@{/users/getById( id = ${user.getId()} )}" th:text="${user.getId()}" ></a>
             </td>

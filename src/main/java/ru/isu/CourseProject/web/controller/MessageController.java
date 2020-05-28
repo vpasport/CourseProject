@@ -32,12 +32,14 @@ public class MessageController {
      */
 
     @RequestMapping( value = "/all", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String all( Model model ){
         model.addAttribute( "messages", messageRepository.getAll() );
         return "messages/messages";
     }
 
     @RequestMapping( value = "/allJson", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public @ResponseBody List<Message> allJson(){
         return messageRepository.getAll();
     }
@@ -47,6 +49,7 @@ public class MessageController {
      */
 
     @RequestMapping( value = "/create", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String create(
             @Valid @ModelAttribute( "message" ) Message message,
             BindingResult errors,
@@ -68,7 +71,7 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/createJson", method = RequestMethod.POST )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody String createJson(
         @RequestParam( "from" ) Integer from,
         @RequestParam( "to" ) Integer to,
@@ -82,6 +85,7 @@ public class MessageController {
     }
 
     @RequestMapping( value = "/create", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String create( Model model ){
         Message message = new Message();
         model.addAttribute( "message", message );
@@ -95,7 +99,7 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/usersJson", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody List<Integer> getRolesJSON(){
         return userRepository.getAllId();
     }
@@ -105,6 +109,7 @@ public class MessageController {
      */
 
     @RequestMapping( value = "/message", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getById( @RequestParam( "id" ) Integer id, Model model ){
         model.addAttribute( "message", messageRepository.getMessageById( id ) );
 
@@ -113,7 +118,7 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/messageJson", method = RequestMethod.GET )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody List<Message> getByIdJson( @RequestParam( "id" ) Integer id ){
         return Arrays.asList( messageRepository.getMessageById( id ) );
     }
@@ -123,6 +128,7 @@ public class MessageController {
      */
 
     @RequestMapping( value = "/message2id", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getBy2Id(
             @RequestParam( "id1" ) Integer id1,
             @RequestParam( "id2" ) Integer id2,
@@ -138,7 +144,7 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/message2idJson", method = RequestMethod.GET )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody List<Message> getById2Json(
             @RequestParam( "id1" ) Integer id1,
             @RequestParam( "id2" ) Integer id2
@@ -148,15 +154,32 @@ public class MessageController {
         return res;
     }
 
-//    @CrossOrigin
-//    @RequestMapping( value = "/kek2", method = RequestMethod.POST )
-//    public @ResponseBody String create(
-//                                       @RequestParam( "fromId") Integer fromId,
-//                                       @RequestParam( "toId" ) Integer toId,
-//                                       @RequestParam( "message" ) String message
-//   ){
-//        System.out.println( String.format( "%s %s %s", fromId, toId, message ) );
-//
-//        return "{status : ok}";
-//    }
+    /*
+        DELETE BY ID
+     */
+
+    @RequestMapping( value = "/deletebyid", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deleteById(
+            @RequestParam( "id" ) Integer id,
+            Model model
+    ){
+        messageRepository.deleteById( id );
+
+        return "redirect:all";
+    }
+
+    /*
+        EDIT MESSAGE BY ID
+     */
+
+    @RequestMapping( value = "/editmessage")
+    public String editMessage(
+            @RequestParam( "id" ) Integer id,
+            Model model
+    ){
+        model.addAttribute( "message", messageRepository.getMessageById( id ) );
+
+        return "messages/editMessage";
+    }
 }

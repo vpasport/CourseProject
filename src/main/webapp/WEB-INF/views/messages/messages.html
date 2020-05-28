@@ -15,6 +15,8 @@
     <h2 class="text-danger">All messages:</h2>
     <table class="table">
         <thead>
+        <th>Edit</th>
+        <th>Delete</th>
         <th>Id</th>
         <th>From Id</th>
         <th>To Id</th>
@@ -24,6 +26,10 @@
         </thead>
         <tbody>
         <tr th:each="message:${messages}">
+            <td> <a th:href="@{/messages/editmessage( id = ${message.getId()} )}" class="btn btn-primary">Edit</a> </td>
+            <td>
+                <a th:href="@{/messages/deletebyid( id = ${message.getId()} )}" class="btn btn-primary">Delete</a>
+            </td>
             <td>
                 <a
                         th:href="@{/messages/message( id = ${message.getId()} )}"

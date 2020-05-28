@@ -21,8 +21,10 @@
         <tbody>
         <tr th:each="execs:${executors}">
             <td th:text="${execs.getId()}" />
-            <td th:text="${execs.getOrder().getId()}" />
-            <td th:text="${execs.getExecutors()}" />
+            <td th:text="${execs.getOrders()}" />
+            <td th:each="exec:${execs.getExecutors()}">
+                <p th:text="${exec.getLogin()}"></p>
+            </td>
         </tr>
         </tbody>
     </table>

@@ -1,6 +1,7 @@
 package ru.isu.CourseProject.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,6 +43,7 @@ public class OrderController {
      */
 
     @RequestMapping( value = "/all", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getAll( Model model ){
         model.addAttribute( "orders", orderRepository.getAll() );
 
@@ -50,7 +52,7 @@ public class OrderController {
 
     @CrossOrigin
     @RequestMapping( value = "/allJson", method =  RequestMethod.GET )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody List<Order> getAllJson(){
         return orderRepository.getAll();
     }
@@ -60,6 +62,7 @@ public class OrderController {
      */
 
     @RequestMapping( value = "/create", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String create( Model model ){
         Order order = new Order();
         model.addAttribute( "order", order );
@@ -68,13 +71,14 @@ public class OrderController {
 
     @ModelAttribute( "customers" )
     public List<User> getCustomers(){
-        List<User> users = userRepository.getAllCustomers();
+        List<User> users = userRepository.getAllByRole( "ROLE_CUSTOMER" );
         for( User user : users ) user.setPassword( null );
         return users;
     }
 
     @CrossOrigin
     @RequestMapping( value = "/usersJson", method = RequestMethod.GET)
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody List<Integer> getRolesJSON(){
         return userRepository.getAllId();
     }
@@ -86,13 +90,15 @@ public class OrderController {
 
     @CrossOrigin
     @RequestMapping( value = "/categoriesnameJson", method = RequestMethod.GET )
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public List<String> getCategoriesNamesJson(){
         return  categoryRepository.getAllNames();
     }
 
     @RequestMapping( value = "/create", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String create(
-            @Valid @ModelAttribute( "order" ) Order order,
+            @ModelAttribute( "order" ) Order order,
             BindingResult errors, Model model
     ){
         if( errors.hasErrors() ) return "/error";
@@ -109,6 +115,7 @@ public class OrderController {
      */
 
     @RequestMapping( value = "/getById", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getById( @RequestParam( "id" ) Integer id,  Model model ){
         model.addAttribute( "order", orderRepository.searchById( id ) );
         model.addAttribute( "executors", executorsRepository.getAllExecutorsByOrderId( id ) );
@@ -117,13 +124,14 @@ public class OrderController {
 
     @CrossOrigin
     @RequestMapping( value = "/getByIdJson", method = RequestMethod.GET )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody Order getByIdJson( @RequestParam( "id" ) Integer id ){
         return orderRepository.searchById( id );
     }
 
     @CrossOrigin
     @RequestMapping( value = "/getexecutorsbyorderidJson", method = RequestMethod.GET )
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody List<User> getExecutorsByOrderId( @RequestParam( "orderid" ) Integer orderId ){
         List<User> users = executorsRepository.getAllExecutorsByOrderId( orderId );
         for( User user : users ) user.setPassword( null );
@@ -135,6 +143,7 @@ public class OrderController {
      */
 
     @RequestMapping( value = "/executors", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String allExecutors( Model model ){
         model.addAttribute( "executors", orderRepository.getAllExecutors() );
         return "orders/executors";
@@ -142,7 +151,7 @@ public class OrderController {
 
     @CrossOrigin
     @RequestMapping( value = "/executorsJson", method = RequestMethod.GET )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody List<Executors> allExecutorsJson(){
         return orderRepository.getAllExecutors();
     }
@@ -152,6 +161,7 @@ public class OrderController {
      */
 
     @RequestMapping( value = "/addexecutor", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String createExecutor( Model model ){
         Executors executors = new Executors();
         model.addAttribute( "executors", executors );
@@ -166,16 +176,18 @@ public class OrderController {
 
     @ModelAttribute( "execs" )
     public List<User> getAllExecutor(){
-        List<User> users = userRepository.getAllExecutors();
+        List<User> users = userRepository.getAllByRole( "ROLE_EXECUTOR" );
         for( User user : users ) user.setPassword( null );
         return users;
     }
 
     @RequestMapping( value = "/addexecutor", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String addExecutor(
-            @Valid @ModelAttribute( "executors" ) Executors executors,
+            @ModelAttribute( "executors" ) Executors executors,
             BindingResult errors, Model model
     ){
+        System.out.println( errors );
         if( errors.hasErrors() ) return "/error";
 
         executorsRepository.save( executors );
@@ -185,19 +197,19 @@ public class OrderController {
 
     @CrossOrigin
     @RequestMapping( value = "/addexecutorJson", method = RequestMethod.POST )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody String addExecutorJson(
             @RequestParam( "orderid" ) Integer orderId,
             @RequestParam( "executorid" ) Integer executorId
     ){
-        Executors executors = new Executors();
-        executors.setOrder( orderRepository.searchById( orderId ) );
-        Set<User> users = new TreeSet<User>();
-        users.add( userRepository.searchById( executorId ) );
-        executors.setExecutors( users );
-
-        executorsRepository.save( executors );
-
+//        Executors executors = new Executors();
+//        executors.setOrder( orderRepository.searchById( orderId ) );
+//        Set<User> users = new TreeSet<User>();
+//        users.add( userRepository.searchById( executorId ) );
+//        executors.setExecutors( users );
+//
+//        executorsRepository.save( executors );
+//
         return "{ status : ok }";
     }
 
@@ -206,6 +218,7 @@ public class OrderController {
      */
 
     @RequestMapping( value = "/selectexecutor", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String selectFinalExecutor(
             @RequestParam( "id" ) Integer id,
             Model model
@@ -218,6 +231,7 @@ public class OrderController {
     }
 
     @RequestMapping( value = "/selectexecutor", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String selectFinalExecutor(
             @RequestParam( "id" ) Integer id,
             @ModelAttribute( "user" ) User user,
@@ -232,12 +246,12 @@ public class OrderController {
 
         orderRepository.save( order );
 
-        return "orders/orders";
+        return "redirect:all";
     }
 
     @CrossOrigin
     @RequestMapping( value = "/selectexecutorJson", method = RequestMethod.POST )
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody String selectFinalExecutor(
             @RequestParam( "orderid" ) Integer orderId,
             @RequestParam( "userid" ) Integer userId
@@ -246,5 +260,36 @@ public class OrderController {
         order.setFinalExecutor( userRepository.searchById( userId ) );
         orderRepository.save( order );
         return "{ status : ok }";
+    }
+
+
+    /*
+        EDIT ORDER BY ID
+     */
+
+    @RequestMapping( value = "/editorder", method = RequestMethod.GET )
+    public String editById(
+            @RequestParam( "id" ) Integer id,
+            Model model
+    ){
+        model.addAttribute( "order", orderRepository.searchById( id ) );
+        model.addAttribute( "executors", executorsRepository.getAllExecutorsByOrderId( id ) );
+
+        return "orders/editOrder";
+    }
+
+    /*
+        DELETE BY ID
+     */
+
+    @RequestMapping( value = "/deletebyid", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deleteById(
+            @RequestParam( "id" ) Integer id,
+            Model model
+    ){
+        orderRepository.deleteById( id );
+
+        return "redirect:all";
     }
 }

@@ -15,6 +15,7 @@
     <h2 class="text-danger">All orders:</h2>
     <table class="table">
         <thead>
+        <th>Delete</th>
         <th>Id</th>
         <th>Name</th>
         <th>Description</th>
@@ -23,10 +24,11 @@
         <th>Category</th>
         <th>Customer</th>
         <th>Max price</th>
-        <th>Final executor</th>
+        <th width="150">Final executor</th>
         </thead>
         <tbody>
         <tr th:each="order:${orders}">
+            <td> <a th:href="@{/orders/deletebyid( id = ${order.getId()} )}" class="btn btn-primary">Delete</a> </td>
             <td>
                 <a
                         th:href="@{/orders/getById( id = ${order.getId()} )}"
@@ -37,9 +39,9 @@
             <td th:text="${order.getDate()}" />
             <td th:text="${order.getDeadline()}" />
             <td th:text="${order.getCategory().getName()}" />
-            <td th:text="${order.getCustomer()}" />
+            <td th:text="${order.getCustomer().getLogin()}" />
             <td th:text="${order.getMaxPrice()}" />
-            <td th:text="${order.getFinalExecutor().getLogin()}" />
+            <td th:if="${order.getFinalExecutor() != null }" th:text="${order.getFinalExecutor().getLogin()}" />
         </tr>
         </tbody>
     </table>
