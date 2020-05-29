@@ -60,7 +60,16 @@
                     th:errors = "${order.maxPrice}"
                     class = "text-danger"></span>
         </div>
-        <button class="button" type = "submit">Submit</button>
+        <div class = "form-group">
+            <label for = "type">Customer: </label>
+            <select id="type" class="form-control" th:field="*{type}">
+                <option
+                        th:each="type:${types}"
+                        th:value="${type}"
+                        th:text="${type}"></option>
+            </select>
+        </div>
+        <button class="btn btn-primary" type = "submit">Submit</button>
     </form>
 </div>
 </body>

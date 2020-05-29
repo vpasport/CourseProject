@@ -1,5 +1,6 @@
 package ru.isu.CourseProject.web.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -10,11 +11,15 @@ import ru.isu.CourseProject.domain.model.Message;
 import ru.isu.CourseProject.domain.model.User;
 import ru.isu.CourseProject.domain.repository.MessageRepository;
 import ru.isu.CourseProject.domain.repository.UserRepository;
+import ru.isu.CourseProject.web.ConvertToJson;
+import ru.isu.CourseProject.web.RoleChecker;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -52,6 +57,8 @@ public class MessageController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String create(
             @Valid @ModelAttribute( "message" ) Message message,
+            @RequestParam( "to" ) Integer toid,
+            @RequestParam( "from" ) Integer fromid,
             BindingResult errors,
             Model model
     ){
@@ -60,6 +67,8 @@ public class MessageController {
             return "/error";
         }
 
+        message.setTo( userRepository.searchById( toid ) );
+        message.setFrom( userRepository.searchById( fromid ) );
         message.setDate( LocalDate.now() );
         message.setTime( LocalTime.now() );
         System.out.println( message );
@@ -71,17 +80,25 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/createJson", method = RequestMethod.POST )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody String createJson(
-        @RequestParam( "from" ) Integer from,
-        @RequestParam( "to" ) Integer to,
-        @RequestParam( "text" ) String text
+        @RequestParam( "to" ) Integer from,
+        @RequestParam( "text" ) String text,
+        @RequestParam( "token" ) User user
     ){
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
         Message message = new Message();
 
-//        message.setFrom( userRepository.searchById( from ) );
+        message.setTo( userRepository.searchById( from ) );
+        message.setFrom( userRepository.searchById( user.getId() ) );
+        message.setText( text );
+        message.setDate( LocalDate.now() );
+        message.setTime( LocalTime.now() );
 
-        return "{ status : ok }";
+        messageRepository.save( message );
+
+        return "{ \"status\" : \"ok\" }";
     }
 
     @RequestMapping( value = "/create", method = RequestMethod.GET )
@@ -99,9 +116,13 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/usersJson", method = RequestMethod.GET)
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
-    public @ResponseBody List<Integer> getRolesJSON(){
-        return userRepository.getAllId();
+    public @ResponseBody String getRolesJSON(
+            @RequestParam( "token" ) User user
+    ) throws JsonProcessingException {
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
+        return ConvertToJson.convert( userRepository.getAllId() );
     }
 
     /*
@@ -118,9 +139,14 @@ public class MessageController {
 
     @CrossOrigin
     @RequestMapping( value = "/messageJson", method = RequestMethod.GET )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
-    public @ResponseBody List<Message> getByIdJson( @RequestParam( "id" ) Integer id ){
-        return Arrays.asList( messageRepository.getMessageById( id ) );
+    public @ResponseBody String getByIdJson(
+            @RequestParam( "id" ) Integer id,
+            @RequestParam( "token" ) User user
+    ) throws JsonProcessingException {
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
+        return ConvertToJson.convert( messageRepository.getMessageById( id ) );
     }
 
     /*
@@ -139,19 +165,27 @@ public class MessageController {
 
         model.addAttribute( "messages", res );
 
+        Collections.sort( res );
+
         return "messages/messages";
     }
 
     @CrossOrigin
     @RequestMapping( value = "/message2idJson", method = RequestMethod.GET )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
-    public @ResponseBody List<Message> getById2Json(
+    public @ResponseBody String getById2Json(
             @RequestParam( "id1" ) Integer id1,
-            @RequestParam( "id2" ) Integer id2
-    ){
+            @RequestParam( "id2" ) Integer id2,
+            @RequestParam( "token" ) User user
+    ) throws JsonProcessingException {
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
         List<Message> res = messageRepository.getMessageBy2Id( id1, id2 );
         if( id1 != id2 ) res.addAll( messageRepository.getMessageBy2Id( id2, id1 ) );
-        return res;
+
+        Collections.sort( res );
+
+        return ConvertToJson.convert( res );
     }
 
     /*
@@ -173,7 +207,8 @@ public class MessageController {
         EDIT MESSAGE BY ID
      */
 
-    @RequestMapping( value = "/editmessage")
+    @RequestMapping( value = "/editmessage", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String editMessage(
             @RequestParam( "id" ) Integer id,
             Model model
@@ -181,5 +216,19 @@ public class MessageController {
         model.addAttribute( "message", messageRepository.getMessageById( id ) );
 
         return "messages/editMessage";
+    }
+
+    @RequestMapping( value = "/editmessage", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String editMessage(
+            @Valid @ModelAttribute( "massage" ) Message message,
+            BindingResult errors,
+            Model model
+    ){
+        if( errors.hasErrors() ) return "error";
+
+        messageRepository.save( message );
+
+        return "redirect:all";
     }
 }

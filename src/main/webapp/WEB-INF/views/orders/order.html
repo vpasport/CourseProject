@@ -46,16 +46,13 @@
         <p id = "maxPrice" th:text = "${order.getMaxPrice()}" />
     </div>
     <div>
+        <label for = "status">Status: </label>
+        <p id = "status" th:text = "${order.getStatus()}" />
+    </div>
+    <div>
         <label for = "fExecutor">Final executor: </label>
         <p id = "fExecutor" th:text = "${order.getFinalExecutor()}" />
         <a th:href="@{/orders/selectexecutor( id = ${order.getId()})}" class="btn btn-primary">Select Final executor</a>
-    </div>
-    <div>
-        <label>Executors: </label>
-        <p th:text="${executors}"></p>
-<!--        <div th:each="executor:${executors}">-->
-<!--            <p th:text="${executor}" ></p>-->
-<!--        </div>-->
     </div>
 </div>
 </body>

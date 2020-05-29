@@ -35,29 +35,30 @@
             <td th:text="${order.getDate()}" />
             <td th:text="${order.getDeadline()}" />
             <td th:text="${order.getCategory().getName()}" />
-            <td th:text="${order.getCustomer()}" />
-<!--            <td th:text="${executors}"/>-->
+            <td th:text="${order.getCustomer().getLogin()}" />
             <td>
-                <div th:each="executor:${executors}">
-                    <p th:text="${executor}"></p>
-                </div>
+                <ul th:each="exec:${order.getExecutors()}">
+                    <li th:text="${exec.getLogin()}"></li>
+                </ul>
             </td>
             <td th:text="${order.getMaxPrice()}" />
         </tr>
         </tbody>
     </table>
     <h2>Select final executor</h2>
-    <form th:action="@{/orders/selectexecutor( id = ${order.getId()} )}" method="post" th:object="${user}">
+    <form th:action="@{/orders/selectexecutor}" method="post">
+        <input type="hidden" name="order" th:value="${order.getId()}" >
         <div class = "form-group">
             <label for = "from">Executor login: </label>
-            <select id="from" class="form-control" th:field="*{login}">
+            <select id="from" class="form-control" name="user">
                 <option
-                        th:each="executor:${executors}"
-                        th:value="${executor.getLogin()}"
-                        th:text="${executor.getLogin()}"></option>
+                        th:each="executor:${order.getExecutors()}"
+                        th:value="${executor.getId()}"
+                        th:text="${executor.getLogin()}">
+                </option>
             </select>
         </div>
-        <button class="button" type = "submit">Submit</button>
+        <button class="btn btn-primary" type = "submit">Submit</button>
     </form>
 </div>
 </body>

@@ -14,16 +14,16 @@
     <h2 class="text-danger">All executors:</h2>
     <table class="table">
         <thead>
-        <th>Id</th>
         <th>Order id</th>
-        <th>Executor id</th>
+        <th>Executors</th>
         </thead>
         <tbody>
-        <tr th:each="execs:${executors}">
-            <td th:text="${execs.getId()}" />
-            <td th:text="${execs.getOrders()}" />
-            <td th:each="exec:${execs.getExecutors()}">
-                <p th:text="${exec.getLogin()}"></p>
+        <tr th:each="order:${orders}">
+            <td th:text="${order.getId()}" />
+            <td>
+                <ul th:each="exec:${order.getExecutors()}">
+                    <li th:text="${exec.getLogin()}"></li>
+                </ul>
             </td>
         </tr>
         </tbody>

@@ -16,6 +16,7 @@
     <table class="table">
         <thead>
         <th>Delete</th>
+        <th>Edit</th>
         <th>Id</th>
         <th>Name</th>
         <th>Description</th>
@@ -24,11 +25,18 @@
         <th>Category</th>
         <th>Customer</th>
         <th>Max price</th>
-        <th width="150">Final executor</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Final executor</th>
         </thead>
         <tbody>
         <tr th:each="order:${orders}">
-            <td> <a th:href="@{/orders/deletebyid( id = ${order.getId()} )}" class="btn btn-primary">Delete</a> </td>
+            <td>
+                <a th:href="@{/orders/deletebyid( id = ${order.getId()} )}" class="btn btn-primary">Delete</a>
+            </td>
+            <td>
+                <a th:href="@{/orders/editorder( id = ${order.getId()} )}" class="btn btn-primary">Edit</a>
+            </td>
             <td>
                 <a
                         th:href="@{/orders/getById( id = ${order.getId()} )}"
@@ -41,10 +49,32 @@
             <td th:text="${order.getCategory().getName()}" />
             <td th:text="${order.getCustomer().getLogin()}" />
             <td th:text="${order.getMaxPrice()}" />
-            <td th:if="${order.getFinalExecutor() != null }" th:text="${order.getFinalExecutor().getLogin()}" />
+            <td th:text="${order.getType()}"/>
+            <td th:text="${order.getStatus()}" />
+            <td> <div th:if="${order.getFinalExecutor() != null }" th:text="${order.getFinalExecutor().getLogin()}" /> </td>
         </tr>
         </tbody>
     </table>
+    <nav aria-label="navigation" th:if="${orders.totalPages>1}">
+        <span>Page</span>
+        <span th:text = "${orders.number+1}"></span>
+        <span>of</span>
+        <span th:text = "${orders.totalPages}"></span>
+        <ul class="pagination">
+            <li class="page-item disabled" th:if="${orders.number==0}">
+                <a class="btn btn-primary" href = "#" aria-disabled="true">Previous</a>
+            </li>
+            <li class = "page-item" th:if="${orders.number>0}">
+                <a class = "btn btn-primary" th:href = "@{/orders/all( page = ${orders.number - 1} )}">Previous</a>
+            </li>
+            <li class = "page-item disabled" th:if = "${orders.number == orders.totalPages - 1}">
+                <a class = "btn btn-primary" href = "#" aria-disabled="true">Previous</a>
+            </li>
+            <li class = "page-item" th:if="${orders.number < orders.totalPages - 1}">
+                <a class = "btn btn-primary" th:href="@{/orders/all( page = ${orders.number + 1} )}">Next</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </body>
 </html>

@@ -57,6 +57,8 @@ public class User implements UserDetails {
 
     private String description;
 
+    private String token;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return AuthorityUtils.createAuthorityList(this.role);
@@ -85,5 +87,13 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean hasAnyRole( String roles ){
+        String[] rl = roles.split( "," );
+        for( String r : rl ){
+            if( ("ROLE_"+r).equals( this.role ) ) return true;
+        }
+        return false;
     }
 }

@@ -1,5 +1,6 @@
 package ru.isu.CourseProject.web.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -7,8 +8,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.isu.CourseProject.domain.model.Category;
+import ru.isu.CourseProject.domain.model.User;
 import ru.isu.CourseProject.domain.repository.CategoryRepository;
+import ru.isu.CourseProject.web.ConvertToJson;
+import ru.isu.CourseProject.web.RoleChecker;
 
+import javax.management.InvalidApplicationException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -33,9 +38,13 @@ public class CategoryController {
 
     @CrossOrigin
     @RequestMapping( value = "/allJson", method = RequestMethod.GET )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
-    public @ResponseBody List<Category> getAll(){
-        return categoryRepository.getAll();
+    public @ResponseBody String getAll(
+            @RequestParam( "token" ) User user
+    ) throws JsonProcessingException {
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
+        return ConvertToJson.convert( categoryRepository.getAll() );
     }
 
     /*
@@ -56,8 +65,8 @@ public class CategoryController {
     public String create(
             @Valid @ModelAttribute( "category" ) Category category,
             BindingResult errors, Model model
-    ){
-        if( errors.hasErrors() ) return "error";
+    ) throws InvalidApplicationException {
+        if( errors.hasErrors() ) throw new InvalidApplicationException( "kek" );
 
         categoryRepository.save( category );
 
@@ -66,11 +75,14 @@ public class CategoryController {
 
     @CrossOrigin
     @RequestMapping( value = "/createJson", method = RequestMethod.POST )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody String createJson(
             @RequestParam( "name" ) String name,
-            @RequestParam( "description" ) String description
+            @RequestParam( "description" ) String description,
+            @RequestParam( "token" ) User user
     ){
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
         Category category = new Category();
 
         if( categoryRepository.getByName( name ) == null ) category.setName( name );
@@ -79,7 +91,7 @@ public class CategoryController {
 
         categoryRepository.save( category );
 
-        return String.format( "{ status : ok, id : %s }", categoryRepository.getByName( name ) );
+        return String.format( "{ \"status\" : \"ok\", \"id\" : \"%s\" }", categoryRepository.getByName( name ) );
     }
 
     /*
@@ -124,6 +136,34 @@ public class CategoryController {
     ){
         categoryRepository.deleteById( id );
 
+        return "redirect:all";
+    }
+
+    /*
+        EDIT CATEGORY BY ID
+     */
+
+    @RequestMapping( value = "/editcategory", method = RequestMethod.GET )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String editCategory(
+            @RequestParam( "id" ) Integer id,
+            Model model
+    ){
+        model.addAttribute( "category", categoryRepository.getById( id ) );
+
+        return "categories/editCategory";
+    }
+
+    @RequestMapping( value = "/editcategory", method = RequestMethod.POST )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String editCategory(
+            @Valid @ModelAttribute( "caterory" ) Category category,
+            BindingResult errors,
+            Model model
+    ){
+        if( errors.hasErrors() ) return "error";
+
+        categoryRepository.save( category );
         return "redirect:all";
     }
 }

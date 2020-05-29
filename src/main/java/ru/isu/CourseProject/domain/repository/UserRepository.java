@@ -40,6 +40,22 @@ public interface UserRepository extends JpaRepository<User, Integer> {
       @Param( "id" ) Integer id
     );
 
+    @Query( "select u from User as u " +
+            "where u.token = :token" )
+    User getUserByToken(
+            @Param( "token" ) String token
+    );
+
+    @Modifying
+    @Transactional
+    @Query( "update User as u " +
+            "set u.token = :token " +
+            "where u.id = :id" )
+    void setToken(
+            @Param( "token" ) String token,
+            @Param( "id" ) Integer id
+    );
+
 //    ( id, firstName, secondName, login, password, email, lastActivity, role, phone, rating, sex, age, specialty )
 
     @Modifying

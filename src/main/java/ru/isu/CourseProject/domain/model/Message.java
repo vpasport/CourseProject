@@ -14,7 +14,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @ToString
 @Table( name = "messages" )
-public class Message {
+public class Message implements Comparable<Message> {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     @Column( name = "message_id" )
@@ -32,4 +32,15 @@ public class Message {
     private LocalDate date;
 
     private LocalTime time;
+
+    @Override
+    public int compareTo(Message m) {
+        int res = this.id.compareTo( m.id );
+
+        if( res == 0 ){
+            res = this.id.compareTo( m.id );
+        }
+
+        return  res;
+    }
 }

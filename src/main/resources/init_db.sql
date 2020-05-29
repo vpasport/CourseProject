@@ -15,8 +15,8 @@ INSERT INTO executors_order (executor_id, order_id) VALUES (2, 2);
 
 -- ADD IN ORDERS
 
-INSERT INTO orders (order_id, date, deadline, description, maxPrice, name, category_category_id, customer_user_id, executors_id, finalExecutor_user_id) VALUES (1, '2020-05-25', '2020-05-27', 'desc', 2, 'name1', 1, 3, NULL, NULL);
-INSERT INTO orders (order_id, date, deadline, description, maxPrice, name, category_category_id, customer_user_id, executors_id, finalExecutor_user_id) VALUES (2, '2020-05-26', '2020-05-30', 'desc', 2000, 'name 2', 1, 3, NULL, 2);
+INSERT INTO orders (order_id, date, deadline, description, maxPrice, name, category_category_id, customer_user_id, executors_id, finalExecutor_user_id, type) VALUES (1, '2020-05-25', '2020-05-27', 'desc', 2, 'name1', 1, 3, NULL, NULL, 'Open');
+INSERT INTO orders (order_id, date, deadline, description, maxPrice, name, category_category_id, customer_user_id, executors_id, finalExecutor_user_id, type) VALUES (2, '2020-05-26', '2020-05-30', 'desc', 2000, 'name 2', 1, 3, NULL, 2, 'Open');
 -- ADD IN USERS
 
 INSERT INTO users (user_id, age, description, email, firstName, lastActivity, login, password, phone, rating, role, secondName, sex, specialty, status) VALUES (1, 20, NULL, 'email1', 'fname1', '2020-05-25', 'login1', 'ff84abb1970b527abf2e96539a5944c844ef5c42df3c6479cda7d64543cdf3e1326878f388587c3aa8913b6aed65f408fa177236357607c22df75d1e1ef38d22', 'phone1', 0, 'ROLE_EXECUTOR', 'sname1', 'Male', 'math', NULL);

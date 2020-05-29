@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th = "http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit message</title>
+
+    <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="../views/header/header :: header" ></div>
+
+<div class = "container">
+    <h2 class = "text-danger">Message:</h2>
+    <form th:action="@{/users/edituser}" method="post" th:object="${user}">
+        <div class = "form-group">
+            <label for = "id">Id: </label>
+            <p id = "id" th:text = "${user.getId()}" />
+            <input type="hidden" class="form-control" th:value="${user.getId()}" th:field="*{id}">
+        </div>
+        <div class = "form-group">
+            <label for = "firstName">First name: </label>
+            <input id="firstName" class="form-control" th:value="${user.getFirstName()}" th:field="*{firstName}">
+            <span
+                    th:if = "${#fields.hasErrors( 'firstName' )}"
+                    th:errors = "${user.firstName}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "secondName">Second name: </label>
+            <input id="secondName" class="form-control" th:value="${user.getSecondName()}" th:field="*{secondName}">
+            <span
+                    th:if = "${#fields.hasErrors( 'secondName' )}"
+                    th:errors = "${user.secondName}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "login">Login: </label>
+            <input id="login" class="form-control" th:value="${user.getLogin()}" th:field="*{login}">
+            <span
+                    th:if = "${#fields.hasErrors( 'login' )}"
+                    th:errors = "${user.login}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "password">Password: </label>
+            <input id="password" class="form-control" th:value="${user.getPassword()}" th:field="*{password}">
+            <span
+                    th:if = "${#fields.hasErrors( 'password' )}"
+                    th:errors = "${user.login}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "email">Email: </label>
+            <input id="email" class="form-control" th:value="${user.getEmail()}" th:field="*{email}">
+            <span
+                    th:if = "${#fields.hasErrors( 'email' )}"
+                    th:errors = "${user.email}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "lastActivity">LastActivity: </label>
+            <p id="lastActivity" th:text="${user.getLastActivity()}"></p>
+            <input type="hidden" class="form-control" th:value="${user.getLastActivity()}" th:field="*{lastActivity}">
+            <span
+                    th:if = "${#fields.hasErrors( 'lastActivity' )}"
+                    th:errors = "${user.login}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "role">Role: </label>
+            <select id="role" class="form-control" th:field="*{role}" th:value="${user.getRole()}">
+                <option
+                        th:each="role:${roles}"
+                        th:value="${role}"
+                        th:text="${role}"></option>
+            </select>
+        </div>
+        <div class = "form-group">
+            <label for = "phone">Phone: </label>
+            <input id="phone" class="form-control" th:value="${user.getPhone()}" th:field="*{phone}">
+            <span
+                    th:if = "${#fields.hasErrors( 'phone' )}"
+                    th:errors = "${user.phone}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for = "rating">Rating: </label>
+            <input id="rating" class="form-control" th:field="*{rating}">
+            <span
+                    th:if = "${#fields.hasErrors( 'rating' )}"
+                    th:errors = "${user.rating}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for ="specialty">Rating: </label>
+            <input id="specialty" class="form-control" th:value="${user.getSpecialty()}" th:field="*{specialty}">
+            <span
+                    th:if = "${#fields.hasErrors( 'specialty' )}"
+                    th:errors = "${user.specialty}"
+                    class = "text-danger"></span>
+        </div>
+        <div class = "form-group">
+            <label for ="sex">Sex: </label>
+            <select id="sex" class="form-control" th:field="*{sex}" th:value="${user.getSex()}">
+                <option
+                        th:each="s:${sex}"
+                        th:value="${s}"
+                        th:text="${s}"></option>
+            </select>
+        </div>
+        <div class = "form-group">
+            <label for ="age">Age: </label>
+            <input id="age" class="form-control" th:value="${user.getAge()}" th:field="*{age}">
+            <span
+                    th:if = "${#fields.hasErrors( 'age' )}"
+                    th:errors = "${user.age}"
+                    class = "text-danger"></span>
+        </div>
+        <input type="hidden" th:field="*{token}">
+        <button class="button" type = "submit">Submit</button>
+    </form>
+</div>
+</body>
+</html>

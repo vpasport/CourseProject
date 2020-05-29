@@ -16,6 +16,7 @@
     <table class="table">
         <thead>
         <th>Delete</th>
+        <th>Edit</th>
         <th>Id</th>
         <th>Name</th>
         <th>description</th>
@@ -24,6 +25,9 @@
         <tr th:each="category:${categories}">
             <td>
                 <a th:href="@{/categories/deletebyid( id = ${category.getId()} )}" class="btn btn-primary">Delete</a>
+            </td>
+            <td>
+                <a th:href="@{/categories/editcategory( id = ${category.getId()} )}" class="btn btn-primary">Edit</a>
             </td>
             <td th:text="${category.getId()}" />
             <td th:text="${category.getName()}" />

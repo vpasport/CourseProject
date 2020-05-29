@@ -1,34 +1,27 @@
 package ru.isu.CourseProject.web.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
 import ru.isu.CourseProject.domain.model.User;
 import ru.isu.CourseProject.domain.repository.UserRepository;
+import ru.isu.CourseProject.web.ConvertToJson;
 import ru.isu.CourseProject.web.CustomAuthenticationProvider;
+import ru.isu.CourseProject.web.RoleChecker;
 
-import javax.servlet.http.HttpSession;
+
 import javax.validation.Valid;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
-
-import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 @Controller
 @RequestMapping( "/users" )
@@ -53,9 +46,13 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/jsonRoles", method = RequestMethod.GET )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
-    public @ResponseBody List<String> getRolesJSON(){
-        return Arrays.asList( "Executor", "Customer", "Admin" );
+    public @ResponseBody String getRolesJSON(
+            @RequestParam( "token" ) User user
+    ) throws JsonProcessingException {
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
+        return ConvertToJson.convert( Arrays.asList( "Executor", "Customer", "Admin" ) );
     }
 
     @ModelAttribute( "roles" )
@@ -65,9 +62,13 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/jsonSex", method = RequestMethod.GET)
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
-    public @ResponseBody List<String> getSexJSON(){
-        return Arrays.asList( "Male", "Female", "Other" );
+    public @ResponseBody String getSexJSON(
+            @RequestParam( "token" ) User user
+    ) throws JsonProcessingException {
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
+        return ConvertToJson.convert( Arrays.asList( "Male", "Female", "Other" ) );
     }
 
     @ModelAttribute( "sex" )
@@ -80,12 +81,14 @@ public class UserController {
     public String create(
             @Valid @ModelAttribute( "user" ) User user,
             BindingResult errors, Model model
-    ){
+    ) throws NoSuchAlgorithmException {
         System.out.println( user );
         if( errors.hasErrors() ) return "/error";
 
         user.setLastActivity( LocalDate.now() );
         user.setRating( 0. );
+        String pass = user.getPassword();
+        user.setPassword( getHash( pass ) );
         System.out.println( user );
 
         userRepository.save( user );
@@ -93,9 +96,22 @@ public class UserController {
         return "redirect:all";
     }
 
+    public String bytesToHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        Formatter formatter = new Formatter(sb);
+        for (byte b : bytes) {
+            formatter.format("%02x", b);
+        }
+        return sb.toString();
+    }
+
+    public String getHash(String pass) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        return bytesToHexString(md.digest(pass.getBytes()));
+    }
+
     @CrossOrigin
     @RequestMapping( value = "/createJson", method = RequestMethod.POST )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
     public @ResponseBody String create(
             @RequestParam( "firstname" ) String firstName,
             @RequestParam( "secondname" ) String secondName,
@@ -107,43 +123,48 @@ public class UserController {
             @RequestParam( "sex" ) String sex,
             @RequestParam( "age" ) Integer age,
             @RequestParam( "specialty" ) String specialty
-    ){
+    ) throws NoSuchAlgorithmException {
         User user = new User();
 
-        System.out.println( login );
         if( userRepository.getByLogin( login ) == null ) user.setLogin( login );
-        else return "{ status : false, error : 'login' }";
+        else return "{ \"status\" : false, \"error\" : \"login\" }";
         user.setFirstName( firstName );
         user.setSecondName( secondName );
-        user.setPassword( password );
+        user.setPassword( getHash(password) );
         user.setEmail( email );
         user.setRole( role );
         user.setPhone( phone );
         user.setSex( sex );
         if( age >= 18 ) user.setAge( age );
-        else return "{ status : false, error : 'age' }";
+        else return "{ \"status\" : false, \"error\" : \"age\" }";
         user.setSpecialty( specialty );
         user.setLastActivity( LocalDate.now() );
         user.setRating( 0. );
+        user.setToken( getHash( String.format( "%s%s%s", login, password, LocalTime.now().toString() ) ) );
 
         System.out.println( user );
 
         userRepository.save(user);
 
-        return String.format( "{ status : ok, id : %s }", userRepository.getByLogin( login ).getId() );
+        return String.format( "{ \"status\" : \"ok\", \"id\" : \"%s\", \"token\" : \"%s\" }", userRepository.getByLogin( login ).getId(), user.getToken() );
     }
 
     /*
         ALL USERS
      */
 
-    @CrossOrigin(  )
+    @CrossOrigin
     @RequestMapping( value = "/allJson", method = RequestMethod.GET )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
-    public @ResponseBody List<User> allJSON(){
+    public @ResponseBody String allJSON(
+            @RequestParam( "token" ) User user
+    ) throws JsonProcessingException {
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
         List<User> users = userRepository.getAll();
-        for( User user : users ) user.setPassword( null );
-        return users;
+        for( User usr : users ) usr.setPassword( null );
+
+        return ConvertToJson.convert( users );
     }
 
     @RequestMapping( value = "/all", method = RequestMethod.GET )
@@ -159,11 +180,16 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/getallexecutorsJson", method = RequestMethod.GET )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
-    public @ResponseBody List<User> getAllExecutorsJson(){
+    public @ResponseBody String getAllExecutorsJson(
+            @RequestParam( "token" ) User user
+    ) throws JsonProcessingException {
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
         List<User> users = userRepository.getAllByRole( "ROLE_EXECUTOR" );
-        for( User user : users ) user.setPassword( null );
-        return users;
+        for( User usr : users ) usr.setPassword( null );
+
+        return ConvertToJson.convert( users );
     }
 
     /*
@@ -172,11 +198,16 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/getallcustomerJson", method = RequestMethod.GET )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
-    public @ResponseBody List<User> getAllCustomerJson(){
+    public @ResponseBody String getAllCustomerJson(
+            @RequestParam( "token" ) User user
+    ) throws JsonProcessingException {
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
         List<User> users = userRepository.getAllByRole( "ROLE_CUSTOMER" );
-        for( User user : users ) user.setPassword( null );
-        return userRepository.getAllByRole( "ROLE_CUSTOMER" );
+        for( User usr : users ) usr.setPassword( null );
+
+        return ConvertToJson.convert( users );
     }
 
     /*
@@ -192,11 +223,17 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping( value = "/getByIdJson", method = RequestMethod.GET )
-    @PreAuthorize("hasAnyRole( 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_EXECUTOR' )")
-    public @ResponseBody User getByIdJson( @RequestParam( "id" ) Integer id ){
-        User user = userRepository.searchById( id );
+    public @ResponseBody String getByIdJson(
+            @RequestParam( "id" ) Integer id,
+            @RequestParam( "token" ) User user
+    ) throws JsonProcessingException {
+        String check = RoleChecker.check( user );
+        if( ! check.equals( "" ) ) return check;
+
+        User usr = userRepository.searchById( id );
         user.setPassword( null );
-        return user;
+
+        return ConvertToJson.convert( usr );
     }
 
     /*
@@ -208,50 +245,31 @@ public class UserController {
     public @ResponseBody String authUser(
             @RequestParam( "login" ) String login,
             @RequestParam( "password" ) String password,
-            HttpServletRequest req
+            @RequestParam( "token" ) User user
     ) throws NoSuchAlgorithmException {
-        System.out.println( login );
+        if( user != null ) return "{ \"status\" : \"already authorize\" }";
+        User usr = userRepository.getByLogin( login );
+        if( usr == null ) return "{ \"status\" : \"user not found\" }";
+        if( ! usr.getPassword().equals( getHash( password ) ) ) return "{ \"status\" : \"invalid password\" }";
+        String token = getHash( String.format( "%s%s%s", login, password, LocalTime.now().toString() ) );
 
-        String pass = getHash( password );
-        User user = userRepository.getByLogin( login );
-//        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(login, password);
-//        Authentication auth = authManager.authenticate(authReq);
-//        SecurityContext sc = SecurityContextHolder.getContext();
-//        sc.setAuthentication(auth);
+        userRepository.setToken( token, usr.getId() );
+
+        return String.format( "{ \"token\" : \"%s\", \"id\" : \"%s\" }", token, usr.getId() );
+
+//        if( token.equals( "" ) ) return "{ \" status \" : \" false \" }";
+//        String pass = getHash( password );
+//        User user = userRepository.getByLogin( login );
+//        if( user != null && user.getPassword().equals( pass ) ){
+//            Authentication auth  = new UsernamePasswordAuthenticationToken(user,user.getPassword(), user.getAuthorities());
 //
-        if( user != null && user.getPassword().equals( pass ) ){
-            Authentication auth  = new UsernamePasswordAuthenticationToken(user,user.getPassword(), user.getAuthorities());
-
-            SecurityContext sc = SecurityContextHolder.getContext();
-            sc.setAuthentication(auth);
-            HttpSession session = req.getSession(true);
-            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
-//            Authentication authentication = new UsernamePasswordAuthenticationToken(
-//                user,
-//                user.getPassword(),
-//                user.getAuthorities()
-//            );
-//            SecurityContextHolder.getContext().setAuthentication( authentication );
-//            System.out.println( SecurityContextHolder.getContext().getAuthentication() );
-//        return String.format( "{ \"JSESSIONID\" : \"%s\" }", session.getAttribute( SPRING_SECURITY_CONTEXT_KEY ) );
-            return String.format( "{ \"JSESSIONID\" : \"%s\" }", RequestContextHolder.currentRequestAttributes().getSessionId() );
-        }
-
-        return "{ \"status\" : \"error\" }";
-    }
-
-    public static String bytesToHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder(bytes.length * 2);
-        Formatter formatter = new Formatter(sb);
-        for (byte b : bytes) {
-            formatter.format("%02x", b);
-        }
-        return sb.toString();
-    }
-
-    public static String getHash(String pass) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-512");
-        return bytesToHexString(md.digest(pass.getBytes()));
+//            SecurityContext sc = SecurityContextHolder.getContext();
+//            sc.setAuthentication(auth);
+//            HttpSession session = req.getSession(true);
+//            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+//            return String.format( "{ \"JSESSIONID\" : \"%s\" }", RequestContextHolder.currentRequestAttributes().getSessionId() );
+//        }
+//
     }
 
     /*
@@ -265,6 +283,36 @@ public class UserController {
             Model model
     ){
         userRepository.deleteById( id );
+
+        return "redirect:all";
+    }
+
+    /*
+        EDIT USER BY ID
+     */
+
+    @RequestMapping( value = "/edituser", method = RequestMethod.GET )
+    @PreAuthorize( "hasRole('ROLE_ADMIN')" )
+    public String editUser(
+            @RequestParam( "id" ) Integer id,
+            Model model
+    ){
+        model.addAttribute( "user", userRepository.searchById( id ) );
+
+        return "user/editUser";
+    }
+
+    @RequestMapping( value = "/edituser", method = RequestMethod.POST )
+    @PreAuthorize( "hasRole('ROLE_ADMIN')" )
+    public String editUser(
+            @Valid @ModelAttribute( "user" ) User user,
+            BindingResult errors,
+            Model model
+    ){
+        System.out.println( errors );
+        if( errors.hasErrors() ) return "error";
+
+        userRepository.save( user );
 
         return "redirect:all";
     }

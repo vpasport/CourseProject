@@ -6,7 +6,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -39,12 +41,21 @@ public class Order {
     @ManyToOne( fetch = FetchType.EAGER )
     private User customer;
 
-    @ManyToOne( fetch = FetchType.EAGER )
-    private Executors executors;
-
     @Min( value = 0 )
     private Double maxPrice;
 
     @ManyToOne( fetch = FetchType.EAGER )
     private User finalExecutor;
+
+    private String type;
+
+    @ManyToMany( fetch = FetchType.EAGER )
+    @JoinTable(
+            name = "executors_order",
+            joinColumns = @JoinColumn( name = "order_id" ),
+            inverseJoinColumns = @JoinColumn( name = "executor_id" )
+    )
+    private Set<User> executors;
+
+    private String status;
 }

@@ -1,5 +1,7 @@
 package ru.isu.CourseProject.domain.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +18,16 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query( "from Order " )
+    Page<Order> getAll(Pageable page);
+
+    @Query( "from Order " )
     List<Order> getAll();
+
+    @Query( "select o from Order as o " +
+            "where o.type = :type" )
+    List<Order> getByType(
+            @Param( "type" ) String type
+    );
 
     @Query( "select o from Order as o " +
             "where o.id = :id" )
@@ -39,5 +50,42 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             "where o.id = :id" )
     void deleteById(
             @Param( "id" ) Integer id
+    );
+
+    @Query( "select max(o.id) from Order as o " )
+    Integer getMaxId();
+
+    @Query( "select o from Order as o " +
+            "where o.customer.id = :id" )
+    List<Order> getByCustomerId(
+            @Param( "id" ) Integer id
+    );
+
+    @Query( "select o from Order as o " +
+            "inner join o.executors as e " +
+            "where o.status = :status and  e.id = :id" )
+    List<Order> getOrdersWithStatusForExecutor(
+            @Param( "id" ) Integer id,
+            @Param( "status" ) String status
+    );
+
+    @Query( "select o from Order as o " +
+            "where o.type = :type and o.status is null " )
+    List<Order> getOrdersByTypeWithStatusNull(
+            @Param( "type" ) String type
+    );
+
+    @Query( "select o from Order as o " +
+            "inner join o.executors as e " +
+            "where e.id = :id and o.status is not null " )
+    List<Order> getOrdersByExecutorIdWithStatusNotNull(
+            @Param( "id" ) Integer id
+    );
+
+    @Query( "select o from Order as o " +
+            "where o.type = :type and o.status is null and o.finalExecutor = :id" )
+    List<Order> getOrdersByExecutorIdAndTypeWithStatusNull(
+            @Param( "type" ) String type,
+            @Param( "id" ) Integer ib
     );
 }
